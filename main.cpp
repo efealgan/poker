@@ -1,7 +1,7 @@
 #include <iostream>
 #include <random>
 
-/*  i = 0 -> spades   
+/*  i = 0 -> spades
     i = 1 -> clubs
     i = 2 -> diamonds
     i = 3 -> hearts 
@@ -11,7 +11,12 @@ int dealtCards[4][13];
 int dealtSuit;
 int dealtRank;
 int dealtCard[2];
-int playerCount = 1;
+bool firstRound = true;
+const int PLAYERCOUNT = 4;
+const int PLAYERMONEY = 1000;
+const int PLAYERBET = 0;
+int bustedPlayerCount = 0;
+
 
 void displayCard(int suit, int rank) {
     if (suit == -1 && rank == -1)
@@ -31,7 +36,7 @@ void displayCard(int suit, int rank) {
     else if (rank == 11) {
         std::cout << "Queen of ";
     }
-    else if (rank == 12) {
+    else {
         std::cout << "King of ";
     }
 
@@ -44,7 +49,7 @@ void displayCard(int suit, int rank) {
     else if (suit == 2) {
         std::cout << "Diamonds ";
     }
-    else if (suit == 3) {
+    else {
         std::cout << "Hearts ";
     }
 }
@@ -61,17 +66,17 @@ int dealCard(int amount) {
         int suit = dis(gen);
         int rank = dis2(gen);
         displayCard(suit, rank);
-            if (dealtCards[suit][rank] == 1) {
-                std::cout << "\nBut that card was already dealt. Trying to deal another one.\n";
-                return dealCard(amount);
-            }
+        std::cout << std::endl;
+        if (dealtCards[suit][rank] == 1) {
+            std::cout << "\nBut that card was already dealt. Trying to deal another one.\n";
+            return dealCard(amount);            
+        }
         dealtCards[suit][rank] = 1;
         dealtSuit = suit;
         dealtRank = rank;
         return suit, rank, dealCard(--amount); ///check if this is correct ///yeah i think this is correct
     }
     else {
-        std::cout << "\nInvalid amount of cards to deal.\n";
         return 0;
     }
 }
@@ -140,19 +145,25 @@ void listCards() {
     }
 }
 class Players {
+    private:
         int playerID;
         int money;
         int bet;
-        int heldCards[2][2] = {{-1, -1}, {-1, -1}};
-        public:
-        void initPlayer(int id, int m, int b) {
+        int heldCards[2][2];
+    public:
+        Players(int id, const int m, const int b) {
             playerID = id;
-            money = m;
-            bet = b;
+            money = PLAYERMONEY;
+            bet = PLAYERBET;
+            heldCards[0][0] = -1;
+            heldCards[0][1] = -1;
+            heldCards[1][0] = -1;
+            heldCards[1][1] = -1;
             std::cout << "Player " << playerID << " has been initialized with " << 
             money << " money, " << 
             bet << " bet, and has no cards dealt yet.\n";
-        }
+            }
+        
         /// @brief heldCards setter
         /// @param x card slot; 0 -> first slot
         ///                     1 -> second slot            
@@ -163,13 +174,17 @@ class Players {
             {
                 this->heldCards[0][0] = s;
                 this->heldCards[0][1] = r;
-                std::cout << this->playerID << " has been dealt the card "; displayCard(heldCards[0][0], heldCards[0][1]);
+                std::cout << "Player " << this->playerID << " has been dealt: "; 
+                displayCard(heldCards[0][0], heldCards[0][1]);
+                std::cout << std::endl;
             }
-            else if (x == 2) // second card is selected
+            else if (x == 2) // second card is selected 
             {
                 this->heldCards[1][0] = s;
                 this->heldCards[1][1] = r;
-                std::cout << this->playerID << " has been dealt the card "; displayCard(heldCards[0][1], heldCards[1][1]);
+                std::cout << "Player " << this->playerID << " has been dealt: "; 
+                displayCard(heldCards[0][1], heldCards[1][1]);
+                std::cout << std::endl;
             }
             else
             {
@@ -177,50 +192,84 @@ class Players {
             }
             
         }
+        ///@brief 
+        int getHeldCards(int x) {
+            int id = this->playerID;
+            if (x == 1) {
+                std::cout << "Player " << id << " has the following cards: ";
+                displayCard(heldCards[0][0], heldCards[0][1]);
+                std::cout << std::endl;
+                return heldCards[0][0], heldCards[0][1];
+            }
+            else if (x == 2) {
+                std::cout << "Player " << id << " has the following cards: ";
+                displayCard(heldCards[1][0], heldCards[1][1]);
+                std::cout << std::endl;
+                return heldCards[1][0], heldCards[1][1];
+            }
+            else {
+                std::cout << "Invalid card slot.\n";
+                return 0;
+            }
+        }
         void dealToPlayer(int amount) {
             for (int i = 0; i < amount; i++) {
-                if (heldCards[0][0] == -1 && heldCards[0][1] == -1) {
+                if (this->heldCards[0][0] == -1 && this->heldCards[0][1] == -1) {
                     dealCard(1);
-                    setHeldCards(1, dealtSuit, dealtRank);
+                    this->setHeldCards(1, dealtSuit, dealtRank); //dealt the first card
                 }
                 else if (this->heldCards[1][0] == -1 && this->heldCards[1][1] == -1) {
                     dealCard(1);
-                    this->setHeldCards(2, dealtSuit, dealtRank);
+                    this->setHeldCards(2, dealtSuit, dealtRank); //dealt the second card
                 }
+                
                 else {
-                    std::cout << "Player " << playerID << " already has 2 cards dealt.\n";
+                    std::cout << "Player " << this->playerID << " already has 2 cards dealt.\n";
                 }
             }
         }
-        
-    
 };
-std::vector<Players> players;
 
-void createPlayer(int id, int m, int b) {
-    Players player;
-    player.initPlayer(id, m, b);
-    players.push_back(player);
-}
-void gameInit() {
-    std::cout << "How many players are there? ";
-    std::cin >> playerCount;
-    Players player[playerCount];
-    for (int i = 0; i < playerCount; i++) {
-        createPlayer(i + 1, 100, 0);
+class Game {
+public:
+    Players player1;
+    Players player2;
+    Players player3;
+    Players player4;
+
+    Game() : player1(1, PLAYERMONEY, PLAYERBET),
+             player2(2, PLAYERMONEY, PLAYERBET),
+             player3(3, PLAYERMONEY, PLAYERBET),
+             player4(4, PLAYERMONEY, PLAYERBET) {}
+
+    void gameLoop() {
+        std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
+        std::cout << "Initializing players.\n";
+
+        std::cout << "\nDealing one card to each player\n";
+
+        player1.dealToPlayer(1);
+        player2.dealToPlayer(1);
+        player3.dealToPlayer(1);
+        player4.dealToPlayer(1);
+        std::cout << std::endl;
+        player1.getHeldCards(1);
+        player2.getHeldCards(1);
+        player3.getHeldCards(1);
+        player4.getHeldCards(1);
     }
-    for (int i = 0; i < playerCount; i++) {
-        player[i].dealToPlayer(2);
-    }
-}
-
-
+};
 
 
 
 int main() {
     initCards();
     listCards();
-    gameInit();
+
+    Game game;
+    game.gameLoop();
+
+    std::cout << "\nPress Enter to quit.";
+    std::cin.get();
     return 0;
-}
+    }
