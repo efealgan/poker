@@ -192,20 +192,25 @@ class Players {
             }
             
         }
-        ///@brief 
+        ///@brief returns the cards held by the player
+        ///@param x card slot; 1 -> first slot 2 -> both slots  
         int getHeldCards(int x) {
             int id = this->playerID;
             if (x == 1) {
-                std::cout << "Player " << id << " has the following cards: ";
+                std::cout << "Player " << id << " has the following card: ";
                 displayCard(heldCards[0][0], heldCards[0][1]);
                 std::cout << std::endl;
                 return heldCards[0][0], heldCards[0][1];
             }
             else if (x == 2) {
                 std::cout << "Player " << id << " has the following cards: ";
+
+                displayCard(heldCards[0][0], heldCards[0][1]);
+                std::cout << " and ";
                 displayCard(heldCards[1][0], heldCards[1][1]);
+
                 std::cout << std::endl;
-                return heldCards[1][0], heldCards[1][1];
+                return heldCards[0][0], heldCards[0][1], heldCards[1][0], heldCards[1][1];
             }
             else {
                 std::cout << "Invalid card slot.\n";
@@ -229,24 +234,119 @@ class Players {
             }
         }
 };
-
 class Game {
+private:
+    int communityCards[5][2];
+    int dealtCommunityCards = 0;
 public:
     Players player1;
     Players player2;
     Players player3;
     Players player4;
+    
 
     Game() : player1(1, PLAYERMONEY, PLAYERBET),
              player2(2, PLAYERMONEY, PLAYERBET),
              player3(3, PLAYERMONEY, PLAYERBET),
-             player4(4, PLAYERMONEY, PLAYERBET) {}
+             player4(4, PLAYERMONEY, PLAYERBET) {
+                for (int i = 0; i < 5; i++){
+                    communityCards[i][0] = -1;
+                    communityCards[i][1] = -1;
+                }
+             }
 
     void gameLoop() {
         std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
-        std::cout << "Initializing players.\n";
+        std::cout << "Initialized players.\n";
+        dealFirstCards();
+        takeBets();
+        dealCommunityCards(3);
+        takeBets();
+        dealCommunityCards(1);
+        takeBets();
+        dealCommunityCards(1);
+        takeBets();
+        scoreHands();
 
-        std::cout << "\nDealing one card to each player\n";
+    }
+    void dealCommunityCards(int amount) {
+    for (int i = 0; i < amount; i++)
+    {    
+        if (communityCards[dealtCommunityCards][0] == -1 && communityCards[dealtCommunityCards][1] == -1) {
+            dealCard(1);
+            communityCards[dealtCommunityCards][0] = dealtSuit;
+            communityCards[dealtCommunityCards][1] = dealtRank;
+            std::cout << "Community card " << dealtCommunityCards + 1 << " is: ";
+            displayCard(communityCards[dealtCommunityCards][0], communityCards[dealtCommunityCards][1]);                std::cout << std::endl;
+            dealtCommunityCards++;
+        }
+        else {
+            std::cout << "Community card " << dealtCommunityCards + 1 << " has already been dealt.\n";
+        }
+    }
+    }
+    int getCommunityCard(int x) {
+        if (x >= 0 && x <= 4) {
+            std::cout << "Community card " << x + 1 << " is: ";
+            displayCard(communityCards[x][0], communityCards[x][1]);
+            std::cout << std::endl;
+            return communityCards[x][0], communityCards[x][1];
+        }
+        else {
+            std::cout << "Invalid community card slot.\n";
+            return 0;
+        }
+    }
+    void takeBets() {
+        //TODO: implement betting
+    }
+    void scoreHands() {
+        //TODO: implement hand recognition
+        if (true){ //royal flush
+
+            /* code */
+        }
+        else if (true){ //straight flush
+        
+            /* code */
+        }
+        else if (true){ //four of a kind
+        
+            /* code */
+        }
+        else if (true){ //full house
+        
+            /* code */
+        }
+        else if (true){ //flush
+        
+            /* code */
+        }
+        else if (true){ //straight
+        
+            /* code */
+        }
+        else if (true){ //three of a kind
+        
+            /* code */
+        }
+        else if (true){ //two pair
+        
+            /* code */
+        }
+        else if (true){ //pair
+        
+            /* code */
+        }
+        else{ //high card
+        
+            /* code */
+        }
+        
+        
+    }
+    void dealFirstCards() { //deal 2 cards to each player
+        std::cout << "\nDealing one card to each player.\n";
 
         player1.dealToPlayer(1);
         player2.dealToPlayer(1);
@@ -257,9 +357,20 @@ public:
         player2.getHeldCards(1);
         player3.getHeldCards(1);
         player4.getHeldCards(1);
+
+        std::cout << "\nDealing the second cards to the players.\n";
+
+        player1.dealToPlayer(1);
+        player2.dealToPlayer(1);
+        player3.dealToPlayer(1);
+        player4.dealToPlayer(1);
+        std::cout << std::endl;
+        player1.getHeldCards(2);
+        player2.getHeldCards(2);
+        player3.getHeldCards(2);
+        player4.getHeldCards(2);
     }
 };
-
 
 
 int main() {
