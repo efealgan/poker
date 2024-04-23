@@ -151,6 +151,7 @@ class Players {
         int bet;
         int heldCards[2][2];
     public:
+        int pWideHand[7][2];
         Players(int id, const int m, const int b) {
             playerID = id;
             money = PLAYERMONEY;
@@ -183,7 +184,7 @@ class Players {
                 this->heldCards[1][0] = s;
                 this->heldCards[1][1] = r;
                 std::cout << "Player " << this->playerID << " has been dealt: "; 
-                displayCard(heldCards[0][1], heldCards[1][1]);
+                displayCard(heldCards[1][0], heldCards[1][1]);
                 std::cout << std::endl;
             }
             else
@@ -194,29 +195,37 @@ class Players {
         }
         ///@brief returns the cards held by the player
         ///@param x card slot; 1 -> first slot 2 -> both slots  
-        int getHeldCards(int x) {
+        int getHeldCards(int x = 0, bool display = false) {
             int id = this->playerID;
             if (x == 1) {
-                std::cout << "Player " << id << " has the following card: ";
+                if (display == true){
+                std::cout << "Player " << id << " has the following card on the first slot: ";
                 displayCard(heldCards[0][0], heldCards[0][1]);
                 std::cout << std::endl;
+                }
                 return heldCards[0][0], heldCards[0][1];
             }
             else if (x == 2) {
-                std::cout << "Player " << id << " has the following cards: ";
-
-                displayCard(heldCards[0][0], heldCards[0][1]);
-                std::cout << " and ";
+                if (display == true){
+                std::cout << "Player " << id << " has the following card on the second slot: ";
                 displayCard(heldCards[1][0], heldCards[1][1]);
 
                 std::cout << std::endl;
-                return heldCards[0][0], heldCards[0][1], heldCards[1][0], heldCards[1][1];
+                }
+                return heldCards[1][0], heldCards[1][1];
             }
             else {
-                std::cout << "Invalid card slot.\n";
-                return 0;
+                if (display == true){
+                std::cout << "Player " << id << " has the cards: ";
+                displayCard(heldCards[0][0], heldCards[0][1]);
+                std::cout << " and ";
+                displayCard(heldCards[1][0], heldCards[1][1]);
+                std::cout << std::endl;
+                }
+                return heldCards[0][0], heldCards[0][1], heldCards[1][0], heldCards[1][1];
             }
         }
+        ///@brief deals a card to the player
         void dealToPlayer(int amount) {
             for (int i = 0; i < amount; i++) {
                 if (this->heldCards[0][0] == -1 && this->heldCards[0][1] == -1) {
@@ -259,13 +268,18 @@ public:
         std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
         std::cout << "Initialized players.\n";
         dealFirstCards();
+        updatePlayerHands();
         takeBets();
         dealCommunityCards(3);
+        updatePlayerHands();
         takeBets();
         dealCommunityCards(1);
+        updatePlayerHands();
         takeBets();
         dealCommunityCards(1);
+        updatePlayerHands();
         takeBets();
+        
         scoreHands();
 
     }
@@ -300,50 +314,47 @@ public:
     void takeBets() {
         //TODO: implement betting
     }
+    void updatePlayerHands() { //get the player's cards and the community cards and merge in an array
+        int callCount = 0;
+        if (callCount == 0) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+            player1.pWideHand[i][j], player1.pWideHand[i][j + 1] = player1.getHeldCards(j + 1);
+            player2.pWideHand[i][j], player2.pWideHand[i][j + 1] = player2.getHeldCards(j + 1);
+            player3.pWideHand[i][j], player3.pWideHand[i][j + 1] = player3.getHeldCards(j + 1);
+            player4.pWideHand[i][j], player4.pWideHand[i][j + 1] = player4.getHeldCards(j + 1);
+                } 
+            }
+        }
+        if (callCount > 0)
+        {       
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 2; j++) {
+                player1.pWideHand[i + 2][j], player1.pWideHand[i + 2][j + 1] = getCommunityCard(i);
+                player2.pWideHand[i + 2][j], player2.pWideHand[i + 2][j + 1] = getCommunityCard(i);
+                player3.pWideHand[i + 2][j], player3.pWideHand[i + 2][j + 1] = getCommunityCard(i);
+                player4.pWideHand[i + 2][j], player4.pWideHand[i + 2][j + 1] = getCommunityCard(i);
+            }
+        }
+        callCount++;
+        }
+    }
     void scoreHands() {
-        //TODO: implement hand recognition
-        if (true){ //royal flush
 
-            /* code */
-        }
-        else if (true){ //straight flush
-        
-            /* code */
-        }
-        else if (true){ //four of a kind
-        
-            /* code */
-        }
-        else if (true){ //full house
-        
-            /* code */
-        }
-        else if (true){ //flush
-        
-            /* code */
-        }
-        else if (true){ //straight
-        
-            /* code */
-        }
-        else if (true){ //three of a kind
-        
-            /* code */
-        }
-        else if (true){ //two pair
-        
-            /* code */
-        }
-        else if (true){ //pair
-        
-            /* code */
-        }
-        else{ //high card
-        
-            /* code */
-        }
         
         
+    }
+    int flush(int id) {
+        bool flush = false;
+        return 0;
+    }
+    int straight(int id) {
+        bool straight = false;
+        return 0;
+    }
+    int duplicate(int id) {
+        bool duplicate = false;
+        return 0;
     }
     void dealFirstCards() { //deal 2 cards to each player
         std::cout << "\nDealing one card to each player.\n";
@@ -365,10 +376,10 @@ public:
         player3.dealToPlayer(1);
         player4.dealToPlayer(1);
         std::cout << std::endl;
-        player1.getHeldCards(2);
-        player2.getHeldCards(2);
-        player3.getHeldCards(2);
-        player4.getHeldCards(2);
+        player1.getHeldCards();
+        player2.getHeldCards();
+        player3.getHeldCards();
+        player4.getHeldCards();
     }
 };
 
