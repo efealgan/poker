@@ -194,10 +194,10 @@ class Players {
             
         }
         ///@brief returns the cards held by the player
-        ///@param x card slot; 1 -> first slot 2 -> both slots  
-        int getHeldCards(int x = 0, bool display = false) {
+        ///@param x card slot; 1 -> first slot 2 -> second slot else -> both slots  
+        int getHeldCards(int selectedSlot = 0, bool display = false) {
             int id = this->playerID;
-            if (x == 1) {
+            if (selectedSlot == 1) {
                 if (display == true){
                 std::cout << "Player " << id << " has the following card on the first slot: ";
                 displayCard(heldCards[0][0], heldCards[0][1]);
@@ -205,7 +205,7 @@ class Players {
                 }
                 return heldCards[0][0], heldCards[0][1];
             }
-            else if (x == 2) {
+            else if (selectedSlot == 2) {
                 if (display == true){
                 std::cout << "Player " << id << " has the following card on the second slot: ";
                 displayCard(heldCards[1][0], heldCards[1][1]);
@@ -226,8 +226,8 @@ class Players {
             }
         }
         ///@brief deals a card to the player
-        void dealToPlayer(int amount) {
-            for (int i = 0; i < amount; i++) {
+        void dealToPlayer(int amountToDeal) {
+            for (int i = 0; i < amountToDeal; i++) {
                 if (this->heldCards[0][0] == -1 && this->heldCards[0][1] == -1) {
                     dealCard(1);
                     this->setHeldCards(1, dealtSuit, dealtRank); //dealt the first card
@@ -239,6 +239,7 @@ class Players {
                 
                 else {
                     std::cout << "Player " << this->playerID << " already has 2 cards dealt.\n";
+                    break;
                 }
             }
         }
@@ -248,21 +249,17 @@ private:
     int communityCards[5][2];
     int dealtCommunityCards = 0;
 public:
-    Players player1;
-    Players player2;
-    Players player3;
-    Players player4;
-    
+    Players players[4];
 
-    Game() : player1(1, PLAYERMONEY, PLAYERBET),
-             player2(2, PLAYERMONEY, PLAYERBET),
-             player3(3, PLAYERMONEY, PLAYERBET),
-             player4(4, PLAYERMONEY, PLAYERBET) {
-                for (int i = 0; i < 5; i++){
-                    communityCards[i][0] = -1;
-                    communityCards[i][1] = -1;
-                }
-             }
+    Game() : players{ Players(1, PLAYERMONEY, PLAYERBET),
+                      Players(2, PLAYERMONEY, PLAYERBET),
+                      Players(3, PLAYERMONEY, PLAYERBET),
+                      Players(4, PLAYERMONEY, PLAYERBET) } {
+        for (int i = 0; i < 5; i++) {
+            communityCards[i][0] = -1;
+            communityCards[i][1] = -1;
+        }
+    }
 
     void gameLoop() {
         std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
@@ -279,6 +276,10 @@ public:
         dealCommunityCards(1);
         updatePlayerHands();
         takeBets();
+        players[0].getHeldCards(3, true);
+        players[1].getHeldCards(3, true);
+        players[2].getHeldCards(3, true);
+        players[3].getHeldCards(3, true);
         
         scoreHands();
 
@@ -319,10 +320,10 @@ public:
         if (callCount == 0) {
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
-            player1.pWideHand[i][j], player1.pWideHand[i][j + 1] = player1.getHeldCards(j + 1);
-            player2.pWideHand[i][j], player2.pWideHand[i][j + 1] = player2.getHeldCards(j + 1);
-            player3.pWideHand[i][j], player3.pWideHand[i][j + 1] = player3.getHeldCards(j + 1);
-            player4.pWideHand[i][j], player4.pWideHand[i][j + 1] = player4.getHeldCards(j + 1);
+            players[0].pWideHand[i][j], players[0].pWideHand[i][j + 1] = players[0].getHeldCards(j + 1);
+            players[1].pWideHand[i][j], players[1].pWideHand[i][j + 1] = players[1].getHeldCards(j + 1);
+            players[2].pWideHand[i][j], players[2].pWideHand[i][j + 1] = players[2].getHeldCards(j + 1);
+            players[3].pWideHand[i][j], players[3].pWideHand[i][j + 1] = players[3].getHeldCards(j + 1);
                 } 
             }
         }
@@ -330,19 +331,17 @@ public:
         {       
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 2; j++) {
-                player1.pWideHand[i + 2][j], player1.pWideHand[i + 2][j + 1] = getCommunityCard(i);
-                player2.pWideHand[i + 2][j], player2.pWideHand[i + 2][j + 1] = getCommunityCard(i);
-                player3.pWideHand[i + 2][j], player3.pWideHand[i + 2][j + 1] = getCommunityCard(i);
-                player4.pWideHand[i + 2][j], player4.pWideHand[i + 2][j + 1] = getCommunityCard(i);
+                players[0].pWideHand[i + 2][j], players[0].pWideHand[i + 2][j + 1] = getCommunityCard(i);
+                players[1].pWideHand[i + 2][j], players[1].pWideHand[i + 2][j + 1] = getCommunityCard(i);
+                players[2].pWideHand[i + 2][j], players[2].pWideHand[i + 2][j + 1] = getCommunityCard(i);
+                players[3].pWideHand[i + 2][j], players[3].pWideHand[i + 2][j + 1] = getCommunityCard(i);
             }
         }
         callCount++;
         }
     }
     void scoreHands() {
-
-        
-        
+        //TODO: implement scoring
     }
     int flush(int id) {
         bool flush = false;
@@ -359,27 +358,27 @@ public:
     void dealFirstCards() { //deal 2 cards to each player
         std::cout << "\nDealing one card to each player.\n";
 
-        player1.dealToPlayer(1);
-        player2.dealToPlayer(1);
-        player3.dealToPlayer(1);
-        player4.dealToPlayer(1);
+        players[0].dealToPlayer(1);
+        players[1].dealToPlayer(1);
+        players[2].dealToPlayer(1);
+        players[3].dealToPlayer(1);
         std::cout << std::endl;
-        player1.getHeldCards(1);
-        player2.getHeldCards(1);
-        player3.getHeldCards(1);
-        player4.getHeldCards(1);
+        players[0].getHeldCards(1);
+        players[1].getHeldCards(1);
+        players[2].getHeldCards(1);
+        players[3].getHeldCards(1);
 
         std::cout << "\nDealing the second cards to the players.\n";
 
-        player1.dealToPlayer(1);
-        player2.dealToPlayer(1);
-        player3.dealToPlayer(1);
-        player4.dealToPlayer(1);
+        players[0].dealToPlayer(1);
+        players[1].dealToPlayer(1);
+        players[2].dealToPlayer(1);
+        players[3].dealToPlayer(1);
         std::cout << std::endl;
-        player1.getHeldCards();
-        player2.getHeldCards();
-        player3.getHeldCards();
-        player4.getHeldCards();
+        players[0].getHeldCards();
+        players[1].getHeldCards();
+        players[2].getHeldCards();
+        players[3].getHeldCards();
     }
 };
 
@@ -390,7 +389,7 @@ int main() {
 
     Game game;
     game.gameLoop();
-
+    
     std::cout << "\nPress Enter to quit.";
     std::cin.get();
     return 0;
