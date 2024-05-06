@@ -16,12 +16,15 @@ const int PLAYERCOUNT = 4;
 const int PLAYERMONEY = 1000;
 const int PLAYERBET = 0;
 int bustedPlayerCount = 0;
+int bufferSuit;
+int bufferRank;
 
 
 void displayCard(int suit, int rank) {
     if (suit == -1 && rank == -1)
     {
         std::cout << "No card dealt yet.\n";
+        return;
     }
     
     if (rank == 0) {
@@ -149,9 +152,10 @@ class Players {
         int playerID;
         int money;
         int bet;
-        int heldCards[2][2];
+        
     public:
         int pWideHand[7][2];
+        int heldCards[2][2];
         Players(int id, const int m, const int b) {
             playerID = id;
             money = PLAYERMONEY;
@@ -248,6 +252,7 @@ class Game {
 private:
     int communityCards[5][2];
     int dealtCommunityCards = 0;
+    
 public:
     Players players[4];
 
@@ -266,20 +271,37 @@ public:
         std::cout << "Initialized players.\n";
         dealFirstCards();
         updatePlayerHands();
+        std::cout << std::endl;
         takeBets();
         dealCommunityCards(3);
+        std::cout << std::endl;
         updatePlayerHands();
+        std::cout << std::endl;
         takeBets();
         dealCommunityCards(1);
+        std::cout << std::endl;
         updatePlayerHands();
+        std::cout << std::endl;
         takeBets();
         dealCommunityCards(1);
+        std::cout << std::endl;
         updatePlayerHands();
+        std::cout << std::endl;
         takeBets();
         players[0].getHeldCards(3, true);
         players[1].getHeldCards(3, true);
         players[2].getHeldCards(3, true);
         players[3].getHeldCards(3, true);
+        
+        std::cout << std::endl;
+        displayHand(0);
+        std::cout << std::endl;
+        displayHand(1);
+        std::cout << std::endl;
+        displayHand(2);
+        std::cout << std::endl;
+        displayHand(3);
+        std::cout << std::endl;
         
         scoreHands();
 
@@ -302,9 +324,10 @@ public:
     }
     int getCommunityCard(int x) {
         if (x >= 0 && x <= 4) {
-            std::cout << "Community card " << x + 1 << " is: ";
-            displayCard(communityCards[x][0], communityCards[x][1]);
-            std::cout << std::endl;
+            //std::cout << "Community card " << x + 1 << " is: ";
+            //displayCard(communityCards[x][0], communityCards[x][1]);
+            //std::cout << std::endl;
+            //commented out to reduce output
             return communityCards[x][0], communityCards[x][1];
         }
         else {
@@ -316,44 +339,48 @@ public:
         //TODO: implement betting
     }
     void updatePlayerHands() { //get the player's cards and the community cards and merge in an array
-        int callCount = 0;
-        if (callCount == 0) {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 2; j++) {
-            players[0].pWideHand[i][j], players[0].pWideHand[i][j + 1] = players[0].getHeldCards(j + 1);
-            players[1].pWideHand[i][j], players[1].pWideHand[i][j + 1] = players[1].getHeldCards(j + 1);
-            players[2].pWideHand[i][j], players[2].pWideHand[i][j + 1] = players[2].getHeldCards(j + 1);
-            players[3].pWideHand[i][j], players[3].pWideHand[i][j + 1] = players[3].getHeldCards(j + 1);
-                } 
+                players[i].pWideHand[j][0] = players[i].heldCards[j][0];
+                players[i].pWideHand[j][1] = players[i].heldCards[j][1];
             }
         }
-        if (callCount > 0)
-        {       
         for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 2; j++) {
-                players[0].pWideHand[i + 2][j], players[0].pWideHand[i + 2][j + 1] = getCommunityCard(i);
-                players[1].pWideHand[i + 2][j], players[1].pWideHand[i + 2][j + 1] = getCommunityCard(i);
-                players[2].pWideHand[i + 2][j], players[2].pWideHand[i + 2][j + 1] = getCommunityCard(i);
-                players[3].pWideHand[i + 2][j], players[3].pWideHand[i + 2][j + 1] = getCommunityCard(i);
-            }
+            players[0].pWideHand[i + 2][0] = communityCards[i][0];
+            players[0].pWideHand[i + 2][1] = communityCards[i][1];
+            players[1].pWideHand[i + 2][0] = communityCards[i][0];
+            players[1].pWideHand[i + 2][1] = communityCards[i][1];
+            players[2].pWideHand[i + 2][0] = communityCards[i][0];
+            players[2].pWideHand[i + 2][1] = communityCards[i][1];
+            players[3].pWideHand[i + 2][0] = communityCards[i][0];
+            players[3].pWideHand[i + 2][1] = communityCards[i][1];
         }
-        callCount++;
-        }
-    }
+
+       }
+
     void scoreHands() {
         //TODO: implement scoring
     }
     int flush(int id) {
         bool flush = false;
-        return 0;
+        return flush;
     }
     int straight(int id) {
         bool straight = false;
-        return 0;
+        return straight;
     }
     int duplicate(int id) {
         bool duplicate = false;
-        return 0;
+        return duplicate;
+    }
+    void displayHand(int id) {
+        int s;
+        int r;
+        for (int i = 0; i < 7; i++) {    
+            s = players[id].pWideHand[i][0];
+            r = players[id].pWideHand[i][1];
+            displayCard(s, r);
+        }
     }
     void dealFirstCards() { //deal 2 cards to each player
         std::cout << "\nDealing one card to each player.\n";
