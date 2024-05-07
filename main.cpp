@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <bits/stdc++.h> 
 
 /*  i = 0 -> spades
     i = 1 -> clubs
@@ -154,6 +155,7 @@ class Players {
         int bet;
         
     public:
+        int handScore;
         int pWideHand[7][2];
         int heldCards[2][2];
         Players(int id, const int m, const int b) {
@@ -293,18 +295,17 @@ public:
         players[2].getHeldCards(3, true);
         players[3].getHeldCards(3, true);
         
-        std::cout << std::endl;
-        displayHand(0);
-        std::cout << std::endl;
-        displayHand(1);
-        std::cout << std::endl;
-        displayHand(2);
-        std::cout << std::endl;
-        displayHand(3);
-        std::cout << std::endl;
-        
         scoreHands();
+        displayCommunityCards();
 
+    }
+
+    void displayCommunityCards () {
+        for (int i = 0; i < 5; i++) {
+            std::cout << "Community card " << i + 1 << " is: ";
+            displayCard(communityCards[i][0], communityCards[i][1]);
+            std::cout << std::endl;
+        }
     }
     void dealCommunityCards(int amount) {
     for (int i = 0; i < amount; i++)
@@ -360,13 +361,66 @@ public:
 
     void scoreHands() {
         //TODO: implement scoring
+        for (int i = 0; i < 4; i++) {
+            flush(i);
+        }
+
     }
     int flush(int id) {
+        int flushCounter = 0;
+        int Fspades = 0;
+        int Fclubs = 0;
+        int Fdiamonds = 0;
+        int Fhearts = 0;
+        for (int i = 0; i < 7; i++) {
+            switch (players[id].pWideHand[i][0])
+            {
+            case 0:
+                Fspades++;
+                break;
+            case 1:
+                Fclubs++;
+                break;
+            case 2:
+                Fdiamonds++;
+                break;
+            case 3:
+                Fhearts++;
+                break;
+            }
+        }
+        if (Fspades >= 5) {
+            flushCounter = Fspades;
+        }
+        else if (Fclubs >= 5) {
+            flushCounter = Fclubs;
+        }
+        else if (Fdiamonds >= 5) {
+            flushCounter = Fdiamonds;
+        }
+        else if (Fhearts >= 5) {
+            flushCounter = Fhearts;
+        }
+        if (flushCounter >= 5) {
+            std::cout << "Player " << id + 1 << " has a flush.\n";
+            return 1;
+        }
+        else {
+            std::cout << "Player " << id + 1 << " does not have a flush.\n";
+            return 0;
+        }
         bool flush = false;
         return flush;
     }
     int straight(int id) {
         bool straight = false;
+        int ranks[7];
+        for (int i = 0; i < 7; i++) {
+            ranks[i] = players[id].pWideHand[i][1];
+        }
+        int n = sizeof(ranks) / sizeof(ranks[0]);
+        std::sort(ranks, ranks + n, std::greater<int>());
+        
         return straight;
     }
     int duplicate(int id) {
