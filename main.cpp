@@ -257,7 +257,7 @@ class Game {
 private:
     int communityCards[5][2];
     int dealtCommunityCards = 0;
-    
+    std::vector <int> flushedCards;
 public:
     Players players[4];
 
@@ -410,43 +410,57 @@ public:
         int Fclubs = 0;
         int Fdiamonds = 0;
         int Fhearts = 0;
+        std::vector <int> spades;
+        std::vector <int> clubs;
+        std::vector <int> diamonds;
+        std::vector <int> hearts;
         for (int i = 0; i < 7; i++) {
             switch (players[id].pWideHand[i][0])
             {
             case 0:
                 Fspades++;
+                spades.push_back(players[id].pWideHand[i][1]);
                 break;
             case 1:
                 Fclubs++;
+                clubs.push_back(players[id].pWideHand[i][1]);
                 break;
             case 2:
                 Fdiamonds++;
+                diamonds.push_back(players[id].pWideHand[i][1]);
                 break;
             case 3:
                 Fhearts++;
+                hearts.push_back(players[id].pWideHand[i][1]);
                 break;
             }
         }
         //choose the highest flush count
+        
         if (Fspades >= 5){
             flushCounter = Fspades;
             flushSuit = "Spades";
+            flushedCards = spades;
         }
         else if (Fclubs >= 5){
             flushCounter = Fclubs;
             flushSuit = "Clubs";
+            flushedCards = clubs;
         }
         else if (Fdiamonds >= 5){
             flushCounter = Fdiamonds;
             flushSuit = "Diamonds";
+            flushedCards = diamonds;
         }
         else if (Fhearts >= 5){
             flushCounter = Fhearts;
             flushSuit = "Hearts";
+            flushedCards = hearts;
         }
         
         if (flushCounter >= 5) {
             std::cout << "Player " << id + 1 << " has a flush of " << flushSuit << "!\n";
+            straight(id, true, flushedCards);
             return 1;
         }
         else {
@@ -456,7 +470,7 @@ public:
         bool flush = false;
         return flush;
     }
-    int straight(int id, bool shortHand = false) {
+    int straight(int id, bool shortHand = false, std::vector <int> flushedCards = std::vector <int>()) {
         int sCounter = 1;
         bool straight = false;
         int currentStraight[5] = {-1, -1, -1, -1, -1}; 
@@ -482,11 +496,11 @@ public:
                     break;
                 }
                 
-                else if (ranks[i] - ranks[i + 1] == 1) {                            //PROBABLY REMOVE i - i+1 = 9 part is necessary for broadway hand recognition. although the problem with that is ace will be the last card on the hand. so it will most likely not be neighboring the 10. 
+                else if (ranks[i] - ranks[i + 1] == 1) {                             
                     currentStraight[sCounter] = ranks[i+1];
-                    sCounter++;                                                     // one solution might be to check if the ongoing straight is a K-Q-J-10. If so, we would just check for an Ace in the hand and if it returns true, the player has a broadway straight.
-                    if (sCounter >= 5){                                             //check if the player just completed the straight, so we don't keep checking unnecessarily.
-                        straight = true;                                            //also the next check might reset the counter. so this is necessary
+                    sCounter++;                                                     
+                    if (sCounter >= 5){                                             
+                        straight = true;                                            
                         break;
                     }
                 }
@@ -511,9 +525,57 @@ public:
                 std::cout << "Player " << id + 1 << " does not have a straight.\n";
             }
         return 0;
-    }
-        else {
-            int ranks[7];
+    }   
+        else {//this block is called when a player has flush and we want to check for straight flush or royal flush 
+            bool royal = false;
+            sort(flushedCards.begin(), flushedCards.end(), std::greater<int>());
+            currentStraight[0] = flushedCards[0];
+            for (int i = 0; i < flushedCards.size(); ++i){
+                std::cout << flushedCards[i] << " ";
+            }
+            for (int i = 0; i < flushedCards.size(); i++) {
+                if ((currentStraight[0] == 12) && (currentStraight[1] == 11) && (currentStraight[2] == 10) && (currentStraight[3] == 9)){ //the current hand has a chance to be a broadway.
+                    for (int j = i-1; j < flushedCards.size(); j++ ){
+                        if (flushedCards[j] == 0){
+                            currentStraight[4] = 0; //this is a workaround for the ace being the last card in the hand. so we just add it to the end of the array. [9, 10, 11, 12, 0]
+                            royal = true;
+                            straight = true;
+                            sCounter++;
+                        }
+                    }
+                }
+                if(straight){
+                    break;
+                }
+                
+                else if (flushedCards[i] - flushedCards[i + 1] == 1) {                             
+                    currentStraight[sCounter] = flushedCards[i+1];
+                    sCounter++;                                                     
+                    if (sCounter >= 5){                                             
+                        straight = true;                                            
+                        break;
+                    }
+                }
+                else if (flushedCards[i] - flushedCards[i + 1] == 0) {                            
+
+                }
+                else {
+                    //reset the counter and currentStraight
+                    for (int j = 0; j < 5; j++){
+                        currentStraight[j] = -1;
+                    }
+                    sCounter = 1;
+                }
+            }
+            if (straight && royal){
+                std::cout << "Player " << id + 1 << " has a Royal Flush!" << std::endl;
+            }
+            else if (straight && !royal){
+                std::cout << "Player " << id + 1 << " has a straight flush!\n";
+            }
+            else if (!straight){
+                std::cout << "Player " << id + 1 << " does not have a straight flush.\n";
+            }
 
         }
         return 0;
