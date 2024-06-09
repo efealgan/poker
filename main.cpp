@@ -404,13 +404,14 @@ public:
         }
     }
     int flush(int id) {
+        bool flush = false;
         std::string flushSuit = "None";
         int flushCounter = 0;
         int Fspades = 0;
         int Fclubs = 0;
         int Fdiamonds = 0;
         int Fhearts = 0;
-        std::vector <int> spades;
+        std::vector <int> spades;  
         std::vector <int> clubs;
         std::vector <int> diamonds;
         std::vector <int> hearts;
@@ -460,17 +461,16 @@ public:
         
         if (flushCounter >= 5) {
             std::cout << "Player " << id + 1 << " has a flush of " << flushSuit << "!\n";
-            straight(id, true, flushedCards);
+            straight(id, true, flushedCards, flushSuit);
             return 1;
         }
         else {
             std::cout << "Player " << id + 1 << " does not have a flush.\n";
             return 0;
         }
-        bool flush = false;
         return flush;
     }
-    int straight(int id, bool shortHand = false, std::vector <int> flushedCards = std::vector <int>()) {
+    int straight(int id, bool shortHand = false, std::vector <int> flushedCards = std::vector <int>(), std::string flushSuit = "None") {
         int sCounter = 1;
         bool straight = false;
         int currentStraight[5] = {-1, -1, -1, -1, -1}; 
@@ -574,7 +574,7 @@ public:
                 std::cout << "Player " << id + 1 << " has a straight flush!\n";
             }
             else if (!straight){
-                std::cout << "Player " << id + 1 << " does not have a straight flush.\n";
+                std::cout << "Player " << id + 1 << " has a flush of " << flushSuit << " ." << std::endl;
             }
 
         }
