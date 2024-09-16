@@ -22,20 +22,15 @@ void Game::gameLoop() {
         std::cout << std::endl;
         takeBets();
         dealCommunityCards(3);
-        std::cout << std::endl;
         updatePlayerHands();
-        std::cout << std::endl;
         takeBets();
         dealCommunityCards(1);
-        std::cout << std::endl;
         updatePlayerHands();
-        std::cout << std::endl;
         takeBets();
         dealCommunityCards(1);
-        std::cout << std::endl;
         updatePlayerHands();
-        std::cout << std::endl;
         takeBets();
+        std::cout << std::endl;
         players[0].getHeldCards(3, true);
         players[1].getHeldCards(3, true);
         players[2].getHeldCards(3, true);
@@ -94,7 +89,7 @@ void Game::dealCommunityCards(int amount) {
             communityCards[dealtCommunityCards][0] = dealtSuit;
             communityCards[dealtCommunityCards][1] = dealtRank;
             std::cout << "Community card " << dealtCommunityCards + 1 << " is: ";
-            displayCard(communityCards[dealtCommunityCards][0], communityCards[dealtCommunityCards][1]);                std::cout << std::endl;
+            displayCard(communityCards[dealtCommunityCards][0], communityCards[dealtCommunityCards][1]);
             dealtCommunityCards++;
         }
         else {
@@ -105,14 +100,10 @@ void Game::dealCommunityCards(int amount) {
 
 int Game::getCommunityCard(int x) {
     if (x >= 0 && x <= 4) {
-        //std::cout << "Community card " << x + 1 << " is: ";
-        //displayCard(communityCards[x][0], communityCards[x][1]);
-        //std::cout << std::endl;
-        //commented out to reduce output
         return communityCards[x][0], communityCards[x][1];
     }
     else {
-        std::cout << "Invalid community card slot.\n";
+        std::cout << "Invalid community card slot selected at Game::getCommunityCard.\n";
         return 0;
     }
 }
@@ -211,14 +202,13 @@ int Game::flush(int id) {
         return 1;
     }
     else {
-        std::cout << "Player " << id + 1 << " does not have a flush.\n";
         return 0;
     }
     bool flush = false;
     return flush;
 }
 
-int Game::straight(int id, bool shortHand = false, std::vector <int> flushedCards = std::vector <int>()) {
+int Game::straight(int id, bool shortHand, std::vector <int> flushedCards) {
         int sCounter = 1;
         bool straight = false;
         int currentStraight[5] = {-1, -1, -1, -1, -1}; 

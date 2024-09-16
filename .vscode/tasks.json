@@ -9,6 +9,7 @@
                 "-g",
                 "${workspaceFolder}/src/main.cpp",
                 "${workspaceFolder}/src/classes/players.cpp",
+                "${workspaceFolder}/src/classes/game.cpp",
                 "${workspaceFolder}/src/globals.cpp",
                 "${workspaceFolder}/src/utilities.cpp",
                 "-o",
