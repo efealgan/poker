@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "../globals.h"
 #include "players.h"
@@ -12,10 +13,10 @@ private:
     int communityCards[5][2];
     int dealtCommunityCards = 0;
     std::vector <int> flushedCards;
+    std::vector <Players> currentPlayers;
 public:
-    Players players[4];
 
-    Game();
+    Game(int playerCount = PLAYERCOUNT);                                                                            //game constructor
 
     void gameLoop();                                                                                                //very basic game loop
     void debugMode();                                                                                               //debug mode                   
@@ -31,6 +32,9 @@ public:
     int duplicate(int id);                                                                                          //check for duplicate cards(pair, two pair, etc)
     void displayHand(int id);                                                                                       //display the player's hand
     void dealFirstCards();                                                                                          //deal 2 cards to each player, one by one
+    void displayPlayerData(int playerID = -1);
+
+
 };
 
 #endif

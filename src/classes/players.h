@@ -33,8 +33,20 @@ class Players {
     int getHeldCards(int selectedSlot = 0, bool display = false);
 
     ///@brief deals x cards to the player
-        ///@param amountToDeal how many cards to deal
+    ///@param amountToDeal how many cards to deal
     void dealToPlayer(int amountToDeal);
+
+    //money get set
+    int getMoney();
+    void setMoney(int m);
+
+    //bet get set
+    int getBet();
+    void setBet(int b);
+
+    //playerID get
+    int getPlayerID() const;
+
 };
 
 #endif

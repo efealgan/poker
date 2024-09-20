@@ -1,7 +1,7 @@
 #include "players.h"
 
 /// @brief player constructor
-/// @param id id of the player
+/// @param id static id of the player
 /// @param m  starting money
 /// @param b  starting bet (should be 0)
 Players::Players(int id, const int m, const int b) {
@@ -45,8 +45,10 @@ void Players::setHeldCards(int x, int s, int r) {
     }
 }
 
-///@brief returns the cards held by the player
-///@param x card slot; 1 -> first slot, 2 -> second slot, else -> both slots)
+///@brief held cards getter
+///@param selectedSlot card slot; 1 -> first slot, 2 -> second slot, else -> both slots)
+///@param display if true, displays the cards dealt. 
+///@return returns the cards held by the player
 int Players::getHeldCards(int selectedSlot, bool display) {
     int id = this->playerID;
     if (selectedSlot == 1) {
@@ -95,10 +97,28 @@ void Players::dealToPlayer(int amountToDeal) {
             break;
         }
     }
+
 }
 
+int Players::getMoney() {
+    return this->money;
+}
 
+void Players::setMoney(int m) {
+    this->money = m;
+}
 
+int Players::getBet() {
+    return this->bet;
+}
+
+void Players::setBet(int b) {
+    this->bet = b;
+}
+
+int Players::getPlayerID() const {
+    return this->playerID;
+}
 
 
 

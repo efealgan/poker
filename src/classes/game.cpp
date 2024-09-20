@@ -6,14 +6,14 @@
 #include "../globals.h" //importing for default values of player money and bet
 
 /// @brief game constructor, initializes 4 players and community cards //maybe this should allow for custom player count using a parameter
-Game::Game() : players{ Players(1, PLAYERMONEY, PLAYERBET),
-                        Players(2, PLAYERMONEY, PLAYERBET),
-                        Players(3, PLAYERMONEY, PLAYERBET),
-                        Players(4, PLAYERMONEY, PLAYERBET) } {
-                        for (int i = 0; i < 5; i++) {
-                            communityCards[i][0] = -1;
-                            communityCards[i][1] = -1;
-                        }
+Game::Game(int playerCount) { 
+    for (int i = 0; i < PLAYERCOUNT; i++) {
+        currentPlayers.emplace_back(Players(i, PLAYERMONEY, PLAYERBET));
+    }
+    for (int i = 0; i < 5; i++) {
+        communityCards[i][0] = -1;
+        communityCards[i][1] = -1;
+    }
 }
 /// @brief the main game loop, this is where the game is played
 void Game::gameLoop() {
@@ -356,26 +356,41 @@ void Game::displayHand(int id) {
 /// @brief deal 2 cards to each player, one by one
 void Game::dealFirstCards() { 
         std::cout << "\nDealing one card to each player.\n";
-
-        players[0].dealToPlayer(1);
-        players[1].dealToPlayer(1);
-        players[2].dealToPlayer(1);
-        players[3].dealToPlayer(1);
+        for (auto&  player : currentPlayers) {
+            player.dealToPlayer(1);
+        }
         std::cout << std::endl;
-        players[0].getHeldCards(1);
-        players[1].getHeldCards(1);
-        players[2].getHeldCards(1);
-        players[3].getHeldCards(1);
-
-        std::cout << "\nDealing the second cards to the players.\n";
-
-        players[0].dealToPlayer(1);
-        players[1].dealToPlayer(1);
-        players[2].dealToPlayer(1);
-        players[3].dealToPlayer(1);
+        for (auto&  player : currentPlayers) {
+            player.getHeldCards(1, true);
+        }
+        for (auto&  player : currentPlayers) {
+            player.dealToPlayer(1);
+        }
         std::cout << std::endl;
-        players[0].getHeldCards();
-        players[1].getHeldCards();
-        players[2].getHeldCards();
-        players[3].getHeldCards();
+        for (auto&  player : currentPlayers) {
+            player.getHeldCards(2, true);
+        }
     }
+    ///@brief displays the player's data
+    void Game::displayPlayerData(int playerID) {
+        for (const auto& player : currentPlayers) {
+            if (player.getPlayerID() == playerID){
+                    std::cout  << "Player ID:" << player.getPlayerID() << std::endl;
+            }
+        }
+    std::cout << "Player ID not found.\n";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
