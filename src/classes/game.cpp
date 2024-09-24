@@ -4,6 +4,7 @@
     
 #include "game.h"
 #include "../globals.h" //importing for default values of player money and bet
+#include "players.h"    //importing for player class @findPlayerByID
 
 /// @brief game constructor, initializes 4 players and community cards //maybe this should allow for custom player count using a parameter
 Game::Game(int playerCount) { 
@@ -22,38 +23,35 @@ void Game::gameLoop() {
         dealFirstCards();
         updatePlayerHands();
         std::cout << std::endl;
-        takeActions();
-        dealCommunityCards(3);
-        updatePlayerHands();
-        takeActions();
-        dealCommunityCards(1);
-        updatePlayerHands();
-        takeActions();
-        dealCommunityCards(1);
-        updatePlayerHands();
-        takeActions();
+        for (int i = 0; i < 3; i++) {
+            takeActions();
+            if (i == 0) {
+                dealCommunityCards(3);
+            }
+            else {
+                dealCommunityCards(1);
+            }
+            updatePlayerHands();
+            takeActions();
+        }
         std::cout << std::endl;
-        players[0].getHeldCards(3, true);
-        players[1].getHeldCards(3, true);
-        players[2].getHeldCards(3, true);
-        players[3].getHeldCards(3, true);
-        
-        
+        for (auto&  player : currentPlayers) {
+            player.getHeldCards(3, true);
+        }
         displayCommunityCards();
         scoreHands();
         //TODO: game loop should actually be a loop, not just a sequence of events
 
     }
-/// @brief a manual debug mode for testing purposes. this is not the final debug mode.
+/// @brief a manual, hardcoded debug mode for testing purposes. this is not the final debug mode.
 void Game::debugMode() {
     dealFirstCards();
     updatePlayerHands();
     setCommunityCards(0, 9, 2, 3, 0, 10, 0, 11, 0, 12); 
 
-    players[0].getHeldCards(3, true);
-    players[1].getHeldCards(3, true);
-    players[2].getHeldCards(3, true);
-    players[3].getHeldCards(3, true);
+    for (auto&  player : currentPlayers) {
+        player.getHeldCards(3, true);
+    }
     
     displayCommunityCards();
     scoreHands();
@@ -120,21 +118,20 @@ void Game::takeActions() {
 }
 /// @brief get the players' cards and the community cards and merge in an array for each player. this is used to check for flushes and straights etc.
 void Game::updatePlayerHands() { 
-    for (int i = 0; i < 4; i++) {
+    // Copy held cards to pWideHand for each player
+    for (auto& player : currentPlayers) {
         for (int j = 0; j < 2; j++) {
-            players[i].pWideHand[j][0] = players[i].heldCards[j][0];
-            players[i].pWideHand[j][1] = players[i].heldCards[j][1];
+            player.pWideHand[j][0] = player.heldCards[j][0];
+            player.pWideHand[j][1] = player.heldCards[j][1];
         }
     }
+
+    // Copy community cards to pWideHand for each player
     for (int i = 0; i < 5; i++) {
-        players[0].pWideHand[i + 2][0] = communityCards[i][0];
-        players[0].pWideHand[i + 2][1] = communityCards[i][1];
-        players[1].pWideHand[i + 2][0] = communityCards[i][0];
-        players[1].pWideHand[i + 2][1] = communityCards[i][1];
-        players[2].pWideHand[i + 2][0] = communityCards[i][0];
-        players[2].pWideHand[i + 2][1] = communityCards[i][1];
-        players[3].pWideHand[i + 2][0] = communityCards[i][0];
-        players[3].pWideHand[i + 2][1] = communityCards[i][1];
+        for (auto& player : currentPlayers) {
+            player.pWideHand[i + 2][0] = communityCards[i][0];
+            player.pWideHand[i + 2][1] = communityCards[i][1];
+        }
     }
 }
 /// @brief not implemented fully yet. but this is where the final scoring will be done. also the order of the functions called here is important because some functions rely on others. also poker hands are checked in a specific order.
@@ -151,6 +148,11 @@ void Game::scoreHands() {
 /// @param id player to check
 /// @return deciding what to return here was hard so i'm just procrastinating
 int Game::flush(int id) {
+    Players* analyzedPlayer = findPlayerByID(id);
+    if (analyzedPlayer == nullptr) {
+        std::cout << "findPlayerByID returned nullptr\n";
+        return 0;
+    }
     std::string flushSuit = "None";
     //i think flushCounter may not be needed
     int flushCounter = 0;
@@ -166,23 +168,24 @@ int Game::flush(int id) {
     std::vector <int> diamonds;
     std::vector <int> hearts;
     for (int i = 0; i < 7; i++) {                                   //checks for a cards suit and adds the RANK to the corresponding vector.
-        switch (players[id].pWideHand[i][0])                        //this vector is later passed to straight() to check for a straight (or royal) flush by checking the ranks.
+        
+        switch (analyzedPlayer->pWideHand[i][0])                        //this vector is later passed to straight() to check for a straight (or royal) flush by checking the ranks.
         {
         case 0:
             Fspades++;
-            spades.push_back(players[id].pWideHand[i][1]);
+            spades.push_back(analyzedPlayer->pWideHand[i][1]);
             break;
         case 1:
             Fclubs++;
-            clubs.push_back(players[id].pWideHand[i][1]);
+            clubs.push_back(analyzedPlayer->pWideHand[i][1]);
             break;
         case 2:
             Fdiamonds++;
-            diamonds.push_back(players[id].pWideHand[i][1]);
+            diamonds.push_back(analyzedPlayer->pWideHand[i][1]);
             break;
         case 3:
             Fhearts++;
-            hearts.push_back(players[id].pWideHand[i][1]);
+            hearts.push_back(analyzedPlayer->pWideHand[i][1]);
             break;
         }
     }
@@ -225,13 +228,18 @@ int Game::flush(int id) {
 /// @param flushedCards this is only used when shortHand is true, it is the vector of ranks of the flushed suit
 /// @return for now returns 0, in future this will return the rank of the highest card in the straight (broadway will be 13 i guess)
 int Game::straight(int id, bool shortHand, std::vector <int> flushedCards) {
+        Players* analyzedPlayer = findPlayerByID(id);
+        if (analyzedPlayer == nullptr) {
+            std::cout << "findPlayerByID returned nullptr\n";
+            return 0;
+        }
         int sCounter = 1;                                                       //counter for the straight is initialized to 1 because the first card is already in the array.
         bool straight = false;                                                  //straight is set to false by default.
         int currentStraight[5] = {-1, -1, -1, -1, -1};                          //currentStraight is an array of 5 integers. it is used to check for a straight. it is initialized to -1. //TODO: maybe use a vector instead of an array
         if (shortHand == false){                                                //this block is called only to check for a straight.   
             int ranks[7];                                                       //ranks is an array of 7 integers. it is used to store the ranks of the player's hand.
             for (int i = 0; i < 7; i++) {
-                ranks[i] = players[id].pWideHand[i][1];
+                ranks[i] = analyzedPlayer->pWideHand[i][1];
             }
             int n = sizeof(ranks) / sizeof(ranks[0]);
             std::sort(ranks, ranks + n, std::greater<int>());                   //ranks is sorted in descending order.
@@ -344,14 +352,19 @@ int Game::duplicate(int id) {
 /// @brief uses displayCard() to display the player's hand including the community cards
 /// @param id player to display
 void Game::displayHand(int id) {
-        int s;
-        int r;
-        for (int i = 0; i < 7; i++) {    
-            s = players[id].pWideHand[i][0];
-            r = players[id].pWideHand[i][1];
-            displayCard(s, r);
-        }
-        std::cout << std::endl;
+    Players* analyzedPlayer = findPlayerByID(id);
+    if (analyzedPlayer == nullptr) {
+        std::cout << "findPlayerByID returned nullptr\n";
+        return;
+    }
+    int s;
+    int r;
+    for (int i = 0; i < 7; i++) {    
+        s = analyzedPlayer->pWideHand[i][0];
+        r = analyzedPlayer->pWideHand[i][1];
+        displayCard(s, r);
+    }
+    std::cout << std::endl;
     }
 /// @brief deal 2 cards to each player, one by one
 void Game::dealFirstCards() { 
@@ -372,7 +385,7 @@ void Game::dealFirstCards() {
         }
     }
     ///@brief displays the player's data
-    void Game::displayPlayerData(int playerID) {
+void Game::displayPlayerData(int playerID) {
         for (const auto& player : currentPlayers) {
             if (player.getPlayerID() == playerID){
                     std::cout  << "Player ID:" << player.getPlayerID() << std::endl;
@@ -381,7 +394,14 @@ void Game::dealFirstCards() {
     std::cout << "Player ID not found.\n";
     }
 
-
+Players* Game::findPlayerByID(int id) {
+    for (auto& player : currentPlayers) {
+        if (player.getPlayerID() == id) {
+            return &player;
+        }
+    }
+    return nullptr;
+}
 
 
 

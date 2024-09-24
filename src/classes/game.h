@@ -33,7 +33,7 @@ public:
     void displayHand(int id);                                                                                       //display the player's hand
     void dealFirstCards();                                                                                          //deal 2 cards to each player, one by one
     void displayPlayerData(int playerID = -1);
-
+    Players* findPlayerByID(int id);
 
 };
 
