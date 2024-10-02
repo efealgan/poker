@@ -116,13 +116,15 @@ int Game::getCommunityCard(int x) {
 void Game::takeActions() {
     //TODO: implement betting
 }
-/// @brief get the players' cards and the community cards and merge in an array for each player. this is used to check for flushes and straights etc.
+/// @brief get the players' cards and the community cards and merge in an array for each player.
+/// this is used to check for flushes and straights etc.
+/// @note the final array is in the form of [player cards, community cards]
 void Game::updatePlayerHands() { 
     // Copy held cards to pWideHand for each player
     for (auto& player : currentPlayers) {
-        for (int j = 0; j < 2; j++) {
-            player.pWideHand[j][0] = player.heldCards[j][0];
-            player.pWideHand[j][1] = player.heldCards[j][1];
+        for (int i = 0; i < 2; i++) {
+            player.pWideHand[i][0] = player.heldCards[i][0];
+            player.pWideHand[i][1] = player.heldCards[i][1];
         }
     }
 
@@ -384,11 +386,13 @@ void Game::dealFirstCards() {
             player.getHeldCards(2, true);
         }
     }
-    ///@brief displays the player's data
+    
 void Game::displayPlayerData(int playerID) {
         for (const auto& player : currentPlayers) {
             if (player.getPlayerID() == playerID){
                     std::cout  << "Player ID:" << player.getPlayerID() << std::endl;
+                    std::cout  << "Player has $" << player.getMoney() << " money, " << player.getBet() << " bet, and has no cards dealt yet.\n";
+                    return;
             }
         }
     std::cout << "Player ID not found.\n";

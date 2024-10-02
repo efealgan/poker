@@ -1,13 +1,10 @@
 #include "players.h"
 
-/// @brief player constructor
-/// @param id static id of the player
-/// @param m  starting money
-/// @param b  starting bet (should be 0)
-Players::Players(int id, const int m, const int b) {
+//please refer to the header file for documentation
+Players::Players(int id, const int startingMoney, const int startingBet) {
     playerID = id;
-    money = PLAYERMONEY;
-    bet = PLAYERBET;
+    money = startingMoney;
+    bet = startingBet;
     heldCards[0][0] = -1;
     heldCards[0][1] = -1;
     heldCards[1][0] = -1;
@@ -17,24 +14,19 @@ Players::Players(int id, const int m, const int b) {
     bet << " bet, and has no cards dealt yet.\n";
 }
 
-/// @brief heldCards setter
-/// @param x card slot; 0 -> first slot
-///                     1 -> second slot            
-/// @param suit [0-3]
-/// @param rank [0-12]
-void Players::setHeldCards(int x, int s, int r) {
-    if (x == 1) // first card is selected
+void Players::setHeldCards(int selectedSlot, int suitValue, int rankValue) {
+    if (selectedSlot == 1) // first card is selected
     {
-        this->heldCards[0][0] = s;
-        this->heldCards[0][1] = r;
+        this->heldCards[0][0] = suitValue;
+        this->heldCards[0][1] = rankValue;
         std::cout << "Player " << this->playerID << " has been dealt: "; 
         displayCard(heldCards[0][0], heldCards[0][1]);
         std::cout << std::endl;
     }
-    else if (x == 2) // second card is selected 
+    else if (selectedSlot == 2) // second card is selected 
     {
-        this->heldCards[1][0] = s;
-        this->heldCards[1][1] = r;
+        this->heldCards[1][0] = suitValue;
+        this->heldCards[1][1] = rankValue;
         std::cout << "Player " << this->playerID << " has been dealt: "; 
         displayCard(heldCards[1][0], heldCards[1][1]);
         std::cout << std::endl;
@@ -44,12 +36,7 @@ void Players::setHeldCards(int x, int s, int r) {
         std::cout << "Invalid card slot.\n";
     }
 }
-
-///@brief held cards getter
-///@param selectedSlot card slot; 1 -> first slot, 2 -> second slot, else -> both slots)
-///@param display if true, displays the cards dealt. 
-///@return returns the cards held by the player
-int Players::getHeldCards(int selectedSlot, bool display) {
+int Players::getHeldCards(int selectedSlot, bool display) const {
     int id = this->playerID;
     if (selectedSlot == 1) {
         if (display == true){
@@ -79,8 +66,24 @@ int Players::getHeldCards(int selectedSlot, bool display) {
     }
 }
 
-///@brief deals x cards to the player
-///@param amountToDeal how many cards to deal
+int Players::getMoney() const {
+    return this->money;
+}
+void Players::setMoney(int newMoney) {
+    this->money = newMoney;
+}
+
+int Players::getBet() const {
+    return this->bet;
+}
+void Players::setBet(int newBet) {
+    this->bet = newBet;
+}
+
+int Players::getPlayerID() const {
+    return this->playerID;
+}
+
 void Players::dealToPlayer(int amountToDeal) {
     for (int i = 0; i < amountToDeal; i++) {
         if (this->heldCards[0][0] == -1 && this->heldCards[0][1] == -1) {
@@ -99,28 +102,6 @@ void Players::dealToPlayer(int amountToDeal) {
     }
 
 }
-
-int Players::getMoney() {
-    return this->money;
-}
-
-void Players::setMoney(int m) {
-    this->money = m;
-}
-
-int Players::getBet() {
-    return this->bet;
-}
-
-void Players::setBet(int b) {
-    this->bet = b;
-}
-
-int Players::getPlayerID() const {
-    return this->playerID;
-}
-
-
 
 
 

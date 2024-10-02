@@ -8,6 +8,18 @@
     i = 3 -> hearts 
 */
 
+/*
+    j = 0 -> A
+    j = 1 -> 2
+    j = 2 -> 3
+    ..
+    ...
+    ..
+    j = 10 -> J
+    j = 11 -> Q
+    j = 12 -> K
+*/
+
 //card related
 int dealtCards[4][13];          //stores if a card is dealt or not. 0-> not dealt, 1-> dealt.
 int dealtSuit;                  //stores the most recently dealt (selected at random) suit

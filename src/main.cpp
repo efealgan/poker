@@ -12,6 +12,7 @@
     this list is roughly based on priority of missing features or existing problems.
     Game class
         straight & flush should return high cards
+            //maybe flush should return all the cards that make the flush
         implement duplicate checking
         implement betting 
         implement scoring
