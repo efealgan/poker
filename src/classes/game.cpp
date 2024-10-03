@@ -3,10 +3,9 @@
 #include <algorithm>    //for std::sort
     
 #include "game.h"
-#include "../globals.h" //importing for default values of player money and bet
-#include "players.h"    //importing for player class @findPlayerByID
+#include "../globals.h" //for defaults
+#include "players.h"    //for findPlayerByID
 
-/// @brief game constructor, initializes 4 players and community cards //maybe this should allow for custom player count using a parameter
 Game::Game(int playerCount) { 
     for (int i = 0; i < PLAYERCOUNT; i++) {
         currentPlayers.emplace_back(Players(i, PLAYERMONEY, PLAYERBET));
@@ -16,7 +15,7 @@ Game::Game(int playerCount) {
         communityCards[i][1] = -1;
     }
 }
-/// @brief the main game loop, this is where the game is played
+
 void Game::gameLoop() {
         std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
         std::cout << "Initialized players.\n";
@@ -43,7 +42,7 @@ void Game::gameLoop() {
         //TODO: game loop should actually be a loop, not just a sequence of events
 
     }
-/// @brief a manual, hardcoded debug mode for testing purposes. this is not the final debug mode.
+
 void Game::debugMode() {
     dealFirstCards();
     updatePlayerHands();
@@ -56,7 +55,7 @@ void Game::debugMode() {
     displayCommunityCards();
     scoreHands();
 }
-/// @brief used to set the community cards for debug mode, input is in the form of suit and rank. also updates player hands automatically
+
 void Game::setCommunityCards(int s1, int r1, int s2, int r2, int s3, int r3, int s4, int r4, int s5, int r5){
     communityCards[0][0] = s1;
     communityCards[0][1] = r1;
@@ -74,7 +73,7 @@ void Game::setCommunityCards(int s1, int r1, int s2, int r2, int s3, int r3, int
     communityCards[4][1] = r5;
     updatePlayerHands();
     }
-/// @brief displays the community cards
+
 void Game::displayCommunityCards() {
     for (int i = 0; i < 5; i++) {
         std::cout << "Community card " << i + 1 << " is: ";
@@ -82,8 +81,7 @@ void Game::displayCommunityCards() {
         std::cout << std::endl;
     }
 }
-/// @brief deals the selected amount of community cards
-/// @param amount amount of community cards to deal
+
 void Game::dealCommunityCards(int amount) {
     for (int i = 0; i < amount; i++)
     {    
@@ -100,25 +98,21 @@ void Game::dealCommunityCards(int amount) {
         }
     }
 }
-/// @brief reads the community card at the selected slot
-/// @param x (0-4) selects a slot to read
-/// @return returns the suit and rank of the selected community card
-int Game::getCommunityCard(int x) {
-    if (x >= 0 && x <= 4) {
-        return communityCards[x][0], communityCards[x][1];
+
+int Game::getCommunityCard(int selectedSlot) {
+    if (selectedSlot >= 0 && selectedSlot <= 4) {
+        return communityCards[selectedSlot][0], communityCards[selectedSlot][1];
     }
     else {
         std::cout << "Invalid community card slot selected at Game::getCommunityCard.\n";
         return 0;
     }
 }
-/// @brief not implemented yet, this is where the players will take their actions like betting, folding, etc.
+
 void Game::takeActions() {
     //TODO: implement betting
 }
-/// @brief get the players' cards and the community cards and merge in an array for each player.
-/// this is used to check for flushes and straights etc.
-/// @note the final array is in the form of [player cards, community cards]
+
 void Game::updatePlayerHands() { 
     // Copy held cards to pWideHand for each player
     for (auto& player : currentPlayers) {
@@ -136,7 +130,7 @@ void Game::updatePlayerHands() {
         }
     }
 }
-/// @brief not implemented fully yet. but this is where the final scoring will be done. also the order of the functions called here is important because some functions rely on others. also poker hands are checked in a specific order.
+
 void Game::scoreHands() {
         //TODO: implement scoring
         for (int i = 0; i < 4; i++) {
@@ -146,10 +140,9 @@ void Game::scoreHands() {
             straight(i, false);
         }
     }
-/// @brief checks for all the flush related things in the player's hand
-/// @param id player to check
-/// @return deciding what to return here was hard so i'm just procrastinating
+
 int Game::flush(int id) {
+    std::vector <int> flushedCards;
     Players* analyzedPlayer = findPlayerByID(id);
     if (analyzedPlayer == nullptr) {
         std::cout << "findPlayerByID returned nullptr\n";
@@ -224,11 +217,7 @@ int Game::flush(int id) {
     bool flush = false;
     return flush;
 }
-/// @brief Checks for all the straight based things
-/// @param id player to check
-/// @param shortHand if the player has a flush and we want to check for straight or royal flush
-/// @param flushedCards this is only used when shortHand is true, it is the vector of ranks of the flushed suit
-/// @return for now returns 0, in future this will return the rank of the highest card in the straight (broadway will be 13 i guess)
+
 int Game::straight(int id, bool shortHand, std::vector <int> flushedCards) {
         Players* analyzedPlayer = findPlayerByID(id);
         if (analyzedPlayer == nullptr) {
@@ -344,15 +333,12 @@ int Game::straight(int id, bool shortHand, std::vector <int> flushedCards) {
         }
         return 0;
     }
-/// @brief not implemented yet
-/// @param id not implemented yet
-/// @return not implemented yet
+
 int Game::duplicate(int id) {
         bool duplicate = false;
         return duplicate;
     }
-/// @brief uses displayCard() to display the player's hand including the community cards
-/// @param id player to display
+
 void Game::displayHand(int id) {
     Players* analyzedPlayer = findPlayerByID(id);
     if (analyzedPlayer == nullptr) {
@@ -368,7 +354,7 @@ void Game::displayHand(int id) {
     }
     std::cout << std::endl;
     }
-/// @brief deal 2 cards to each player, one by one
+
 void Game::dealFirstCards() { 
         std::cout << "\nDealing one card to each player.\n";
         for (auto&  player : currentPlayers) {

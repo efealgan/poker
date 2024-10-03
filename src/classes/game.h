@@ -10,24 +10,69 @@
 
 class Game {
 private:
+    /**
+     * @brief Array of community cards.
+     * @note The array is in the form of [suit], [rank].
+     * @details The array is initialized to -1, which is an invalid card.
+     */
     int communityCards[5][2];
+    /**
+     * @brief Number of community cards dealt.
+     */
     int dealtCommunityCards = 0;
-    std::vector <int> flushedCards;
+    /**
+     * @brief Vector of players.
+     */
     std::vector <Players> currentPlayers;
 public:
-
-    Game(int playerCount = PLAYERCOUNT);                                                                            //game constructor
-
+    /**
+     * @brief Constructor for the Game class.
+     * @param playerCount Number of players to initialize.
+     * @details Initializes the players and community cards.
+     * @note Please use the default value for playerCount. Defaults can be changed in globals.h.
+     */
+    Game(int playerCount = PLAYERCOUNT);                                                                       
+    /**
+     * @brief The main game loop, this is where the game is played.
+     * @details This function is the main game loop. It initializes the players, deals the first cards, updates the player hands, deals the community cards, and scores the hands.
+     */
     void gameLoop();                                                                                                
+    /**
+     * @brief A manual, hardcoded debug mode for testing purposes. This is not the final debug mode.
+     */
     void debugMode();                                                                                                                  
+    /**
+     * @brief Sets the community cards for debug mode.
+     * @note Input is in the form of suit, rank, suit, rank...
+     * @note Updates player hands automatically.
+     */
     void setCommunityCards(int s1, int r1, int s2, int r2, int s3, int r3, int s4, int r4, int s5, int r5);
-    void displayCommunityCards();                                        
+    /**
+     * @brief Displays the community cards.
+     */
+    void displayCommunityCards(); 
+    /**
+     * @brief Deals the selected amount of community cards.
+     * @param amount Amount of community cards to deal.
+     */
     void dealCommunityCards(int amount);
-    int getCommunityCard(int x);
+    /**
+     * @brief Reads the community card at the selected slot.
+     * @param selectedSlot (0-4) selects a slot to read.
+     * @return Returns the suit and rank of the selected community card.
+     */
+    int getCommunityCard(int selectedSlot);
+    /**
+     * @brief [WIP] This function is used to take actions from the players.
+     * @details This function is not implemented yet. It will be used to take actions from the players like betting, folding, etc.
+     * @todo Implement the function.
+     */
     void takeActions();  
     /**
      * @brief Adds newly dealt cards to players' hand.
      * @todo Reset call counter after each game.
+     * @note The final array is in the form of [player cards, community cards].
+     * @note There is lots of room for optimization.
     */
     void updatePlayerHands();
     /**
@@ -72,24 +117,12 @@ public:
      * @param playerID ID of the player to display.
      */
     void displayPlayerData(int playerID = -1);
-
     /**
      * @brief This function is used to find a player by their ID.
      * @param id ID of the player to find.
      * @return Returns a pointer to the player with the specified ID.
     */
     Players* findPlayerByID(int id);
-
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-

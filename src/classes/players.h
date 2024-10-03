@@ -5,12 +5,16 @@
 #include "../utilities.h"
 #include "../globals.h"
 
-
+/**
+ * @class Players
+ * @brief This class creates and manages players.
+ * @details Manages player-specific data such as money, bet, and cards.
+*/
 class Players {
 private:
-    int playerID;               //this ID is static, adding or removing players does not change existing players' ID
-    int money;                  //current player money //default in globals.h
-    int bet;                    //current player bet   //default in globals.h
+    int playerID;               //Static ID of player, adding or removing players does not change existing players' ID
+    int money;                  //current player money
+    int bet;                    //current player bet
         
 public:
     int handScore;              //NOT USED //this might be useful for a future feature when determining the winner
@@ -19,50 +23,68 @@ public:
     int pShortHandBuffer[5][2]; //the best evaluated hand 2: electric boogaloo. because i am stupid
     int heldCards[2][2];        //player cards
     int flushCards[7][2];       //we pass this to straight() after a flush so we can check for a straight flush
-    /// @brief player constructor
-    /// @param id static id of the player
-    /// @param m  starting money
-    /// @param b  starting bet (should be 0)
+    /**
+     * @brief Constructor for the Players class.
+     * @param id Static id of the player.
+     * @param m  Starting money for the player.
+     * @param b  Starting bet for the player.
+    */
     Players(int id, const int m, const int b);
-        
-    //cards get set
 
-    /// @brief heldCards setter
-    /// @param selectedSlot card slot:  1 -> first slot
-    ///                                 2 -> second slot            
-    /// @param suitValue [0-3]
-    /// @param rankValue [0-12]
+    // cards
+    /**
+     * @brief Sets the held cards for the player.
+     * @param selectedSlot Card slot:  1 -> first slot
+     *                                 2 -> second slot
+     * @param suitValue [0-3] New suit value for the card.
+     * @param rankValue [0-12] New rank value for the card.
+     */
     void setHeldCards(int selectedSlot, int suitValue, int rankValue);
-    ///@brief held cards getter
-    ///@param selectedSlot card slot; 1 -> first slot, 2 -> second slot, else -> both slots)
-    ///@param display if true, displays the cards dealt. 
-    ///@return [CONST] returns the cards held by the player
+    /**
+     * @brief Gets the held cards for the player.
+     * @param selectedSlot Card slot:  1 -> first slot
+     *                                 2 -> second slot
+     *                                 else -> both slots
+     * @param display If true, displays the cards dealt.
+     * @return Returns the cards held by the player.
+     */
     int getHeldCards(int selectedSlot = 0, bool display = false) const;
 
-    
     //money
-    ///@brief money getter for the passed player
-    ///@return [CONST] returns the current money of the player
+    /**
+     * @brief Money getter for the passed player.
+     * @return [CONST] Returns the current money of the player.
+     */
     int getMoney() const;
-    ///@brief money setter for the passed player
-    ///@param newMoney the amount of money to set
+    /**
+     * @brief Money setter for the passed player.
+     * @param newMoney The amount of money to set.
+     */
     void setMoney(int newMoney);
 
     //bet
-    ///@brief bet getter for the passed player
-    ///@return [CONST] returns the current bet of the player
+    /** 
+     * @brief bet getter for the passed player
+     * @return [CONST] returns the current bet of the player
+    */
     int getBet() const;
-    ///@brief bet setter for the passed player
-    ///@param newBet the amount of bet to set
+    /**
+     * @brief Bet setter for the passed player.
+     * @param newBet The amount of bet to set
+    */
     void setBet(int newBet);
 
     //playerID
-    ///@brief playerID getter for the passed player
-    ///@return [CONST] returns the playerID of the player
+    /**
+     * @brief playerID getter for the passed player
+     * @return [CONST] returns the playerID of the player
+     */
     int getPlayerID() const;
 
-    ///@brief deals and sets the selected amount of cards to the player
-    ///@param amountToDeal how many cards to deal
+    /**
+     * @brief Deals the selected amount of cards to the player.
+     * @param amountToDeal How many cards to deal.
+     */
     void dealToPlayer(int amountToDeal);
 
 };
