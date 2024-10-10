@@ -1,9 +1,11 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <array>
+#include <tuple>
+#include <stdexcept>
 
 #include "../globals.h"
 #include "players.h"
@@ -102,7 +104,7 @@ public:
      * @brief [NOT IMPLEMENTED] Checks for pairs in the player's hand.
      * @todo implement the function
      */
-    int duplicate(int id);
+    std::vector<int> duplicate(int id);
     /**
      * @brief Displays the player's hand including the community cards.
      * @param id ID of the player to display.
@@ -124,5 +126,3 @@ public:
     */
     Players* findPlayerByID(int id);
 };
-
-#endif

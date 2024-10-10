@@ -8,37 +8,37 @@
 void displayCard(int suit, int rank) {
     if (suit == -1 && rank == -1)
     {
-        std::cout << "No card dealt yet.\n";
+        std::cout << "no card.\n";
         return;
     }
     
     if (rank == 0) {
-        std::cout << "Ace of ";
+        std::cout << "Ace";
     }
     else if (rank < 10) {
-        std::cout << cards[suit][rank] << " of ";
+        std::cout << rank + 1;
     }
     else if (rank == 10) {
-        std::cout << "Jack of ";
+        std::cout << "Jack";
     }
     else if (rank == 11) {
-        std::cout << "Queen of ";
+        std::cout << "Queen";
     }
-    else {
-        std::cout << "King of ";
+    else if (rank == 12){
+        std::cout << "King";
     }
 
     if (suit == 0) {
-        std::cout << "Spades ";
+        std::cout << " of Spades ";
     }
     else if (suit == 1) {
-        std::cout << "Clubs ";
+        std::cout << " of Clubs ";
     }
     else if (suit == 2) {
-        std::cout << "Diamonds ";
+        std::cout << " of Diamonds ";
     }
-    else {
-        std::cout << "Hearts ";
+    else if (suit == 3){
+        std::cout << " of Hearts ";
     }
 }
 
@@ -136,3 +136,14 @@ void listCards() { //this function is completely unnecessary and the symbols can
     }
 }
 
+bool zeroFirstDesc(int a, int b){
+    if (a == 0) return true;
+    if (b == 0) return false;
+    return a > b;
+}
+
+void setArrayToValue(int* arr, size_t size, int value){
+    for (size_t i = 0; i < size; i++){
+        arr[i] = value;
+    }
+}

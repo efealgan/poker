@@ -1,40 +1,27 @@
 #include "globals.h"
 
+int dealtCards[4][13];          
+int dealtSuit;                
+int dealtRank;               
+int dealtCard[2];             
+int bufferSuit;               
+int bufferRank;                
+int cards[4][13];              
 
-/*
-    i = 0 -> spades
-    i = 1 -> clubs
-    i = 2 -> diamonds
-    i = 3 -> hearts 
-*/
+bool firstRound = true;       
+int bustedPlayerCount = 0;   
 
-/*
-    j = 0 -> A
-    j = 1 -> 2
-    j = 2 -> 3
-    ..
-    ...
-    ..
-    j = 10 -> J
-    j = 11 -> Q
-    j = 12 -> K
-*/
+const int PLAYERMONEY = 1000;  
+const int PLAYERBET = 0;      
+const int PLAYERCOUNT = 4;     
 
-//card related
-int dealtCards[4][13];          //stores if a card is dealt or not. 0-> not dealt, 1-> dealt.
-int dealtSuit;                  //stores the most recently dealt (selected at random) suit
-int dealtRank;                  //stores the most recently dealt (selected at random) rank
-int dealtCard[2];               //combines the two values above, idk if this is needed
-int bufferSuit;                 //idk where i used this
-int bufferRank;                 //same as bufferSuit
-int cards[4][13];               //is cards
-
-//game related
-bool firstRound = true;         //so we can have a gameloop i guess
-int bustedPlayerCount = 0;      //is busted player count
-
-
-//defaults
-const int PLAYERMONEY = 1000;   //default starting money. 
-const int PLAYERBET = 0;        //default starting bet.
-const int PLAYERCOUNT = 4;      //default playercount, note that changing this does not actually add new players. this is just for displaying player count.
+const int ROYALFLUSHSCORE = 9;
+const int STRAIGHTFLUSHSCORE = 8;
+const int FOUROFAKINDSCORE = 7;
+const int FULLHOUSESCORE = 6;
+const int FLUSHSCORE = 5;
+const int STRAIGHTSCORE = 4;
+const int THREEOFAKINDSCORE = 3;
+const int TWOPAIRSCORE = 2;
+const int PAIRSCORE = 1;
+const int HIGHCARDSCORE = 0;

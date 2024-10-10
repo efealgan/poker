@@ -40,7 +40,7 @@ int Players::getHeldCards(int selectedSlot, bool display) const {
     int id = this->playerID;
     if (selectedSlot == 1) {
         if (display == true){
-            std::cout << "Player " << id << " has the following card on the first slot: ";
+            std::cout << "Player " << id + 1 << " has the following card on the first slot: ";
             displayCard(heldCards[0][0], heldCards[0][1]);
             std::cout << std::endl;
         }
@@ -48,7 +48,7 @@ int Players::getHeldCards(int selectedSlot, bool display) const {
     }
     else if (selectedSlot == 2) {
         if (display == true){
-            std::cout << "Player " << id << " has the following card on the second slot: ";
+            std::cout << "Player " << id + 1 << " has the following card on the second slot: ";
             displayCard(heldCards[1][0], heldCards[1][1]);
             std::cout << std::endl;
         }
@@ -56,7 +56,7 @@ int Players::getHeldCards(int selectedSlot, bool display) const {
     }
     else {
         if (display == true){
-            std::cout << "Player " << id << " has the cards: ";
+            std::cout << "Player " << id + 1 << " has the cards: ";
             displayCard(heldCards[0][0], heldCards[0][1]);
             std::cout << " and ";
             displayCard(heldCards[1][0], heldCards[1][1]);

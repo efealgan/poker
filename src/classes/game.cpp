@@ -1,10 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>    //for std::sort
-    
 #include "game.h"
-#include "../globals.h" //for defaults
-#include "players.h"    //for findPlayerByID
 
 Game::Game(int playerCount) { 
     for (int i = 0; i < PLAYERCOUNT; i++) {
@@ -138,6 +132,9 @@ void Game::scoreHands() {
         }
         for (int i = 0; i < 4; i++) {
             straight(i, false);
+        }
+        for (int i = 0; i < 4; i++) {
+            duplicate(i);
         }
     }
 
@@ -332,12 +329,143 @@ int Game::straight(int id, bool shortHand, std::vector <int> flushedCards) {
 
         }
         return 0;
+}
+
+std::vector<int>Game::duplicate(int id) {
+    std::vector<int> score;
+    Players* analyzedPlayer = findPlayerByID(id);
+    if (analyzedPlayer == nullptr){
+        throw std::runtime_error("findPlayerByID() returned nullptr.");
+    }
+    int duplicateCards[13];
+    int ranks[7];
+
+    setArrayToValue(duplicateCards, 13, 0);
+    setArrayToValue(ranks, 7, -1);
+
+    for (int i = 0; i < 7; i++) { //store the ranks of the player's hand in the ranks array.
+        ranks[i] = analyzedPlayer->pWideHand[i][1];
     }
 
-int Game::duplicate(int id) {
-        bool duplicate = false;
-        return duplicate;
+    int n = sizeof(ranks) / sizeof(ranks[0]);
+    std::sort(ranks, ranks + n, zeroFirstDesc);
+    std::cout << "Player " << id+1 << " has the cards: ";
+    for (int i = 0; i < 7; i++) {
+        std::cout << ranks[i]+1 << " ";
     }
+    std::cout << std::endl;
+    for (int i = 0; i < 7; i++) { //add cards to duplicateCards
+        duplicateCards[ranks[i]]++;
+    }
+    int pairs[3] = {-1, -1, -1};
+    int pairCounter = 0;
+    int trios[2] = {-1, -1};
+    int trioCounter = 0;
+    int quad = -1;
+    int quadCounter = 0;
+    
+    for (int i = 0; i < 13; i++) {
+        switch (duplicateCards[i]){
+            case 2:
+                pairs[pairCounter] = i;
+                pairCounter++;
+                break;
+            case 3:
+                trios[trioCounter] = i;
+                trioCounter++;
+                break;
+            case 4:
+                quad = i;
+                quadCounter++;
+                break;
+            default:
+                break;
+        }
+    }
+
+    //For this if chain, H = High Card(s), P = Paired Card(s), T = Trio Card, Q = Quad Card. S = Score of the hand. S values can be found in globals.cpp/.h. 
+
+    if (quadCounter == 1){
+        for (int i = 0; i < 7; i++){
+            if (ranks[i] == quad){
+                ranks[i] = -1;
+            }
+        }
+        std::sort(ranks, ranks + n, zeroFirstDesc);
+        score.push_back(FOUROFAKINDSCORE);
+        score.push_back(quad);
+        score.push_back(ranks[0]);
+        std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has four of ";
+        displayCard(-1, quad);
+        std::cout <<"s!\n";
+        //score should have score first, then quad, then the remaining high card. Like so -> <S, Q, H>
+        return score;
+    }
+    else if (trioCounter > 0 && pairCounter > 0){
+        score.push_back(FULLHOUSESCORE);
+        score.push_back(trios[0]);
+        score.push_back(pairs[0]);
+
+        std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has a full house of three ";
+        displayCard(-1, trios[0]);
+        std::cout << "s and two ";
+        displayCard(-1, pairs[0]);
+        std::cout << "s!\n";
+
+        //this vector contains all the cards in the hand. so no high card is needed. <S, T, P>
+        return score;
+    }
+    else if (pairCounter > 1){
+        for (int i = 0; i < 7; i++){
+            if (ranks[i] == pairs[0] || ranks[i] == pairs[1]){
+                ranks[i] = -1;
+            }
+        }
+        std::sort(ranks, ranks + n, zeroFirstDesc);
+        score.push_back(TWOPAIRSCORE);
+        score.push_back(pairs[0]);
+        score.push_back(pairs[1]);
+        score.push_back(ranks[0]);
+
+        std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has two pairs! A pair of ";
+        displayCard(-1, pairs[0]);
+        std::cout << "s and a pair of ";
+        displayCard(-1, pairs[1]);
+        std::cout << "s.\n";
+
+        //score should be <S, P1, P2, H>
+        return score;
+    }
+    else if (pairCounter > 0){
+        for (int i = 0; i < 7; i++){
+            if (ranks[i] == pairs[0]){
+                ranks[i] = -1;
+            }
+        }
+        std::sort(ranks, ranks + n, zeroFirstDesc);
+        score.push_back(PAIRSCORE);
+        score.push_back(pairs[0]);
+        for (int i = 0; i < 3; i++){
+            score.push_back(ranks[i]);
+        }
+
+        std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has a pair of ";
+        displayCard(-1, pairs[0]);
+        std::cout << "s!\n";
+        
+        //score should be <S, P, H1, H2, H3>
+        return score;
+    }
+    else {
+        score.push_back(HIGHCARDSCORE);
+        for (int i = 0; i < 5; i++){
+            score.push_back(ranks[i]);
+        }
+
+        //score should be <S, H1, H2, H3, H4, H5>
+        return score;
+    }
+}
 
 void Game::displayHand(int id) {
     Players* analyzedPlayer = findPlayerByID(id);
