@@ -90,7 +90,7 @@ public:
      * @note Checking for Straight Flush and Royal Flush calls the straight() function.
      * @todo return values should be organized, in case of a flush should return the ranks
      */
-    int flush(int id);
+    std::vector<int> flush(int id);
     /**
      * @brief Checks for straight types.
      * @param id ID of the player to check.
@@ -99,7 +99,7 @@ public:
      * @return Not organized yet.
      * @todo Organize the return values. And return the high card.
      */
-    int straight(int id, bool shortHand = false, std::vector <int> flushedCards = std::vector <int>());
+    std::vector<int> straight(int id, bool shortHand = false, std::vector <int> flushedCards = std::vector <int>());
     /**
      * @brief [NOT IMPLEMENTED] Checks for pairs in the player's hand.
      * @todo implement the function

@@ -1,6 +1,7 @@
 #ifndef PLAYERS_H
 #define PLAYERS_H
 
+#include <vector>
 #include <iostream>
 #include "../utilities.h"
 #include "../globals.h"
@@ -23,6 +24,7 @@ public:
     int pShortHandBuffer[5][2]; //the best evaluated hand 2: electric boogaloo. because i am stupid
     int heldCards[2][2];        //player cards
     int flushCards[7][2];       //we pass this to straight() after a flush so we can check for a straight flush
+    std::vector <int> score;    //the best evaluated hand of the player.
     /**
      * @brief Constructor for the Players class.
      * @param id Static id of the player.

@@ -12,18 +12,22 @@ Game::Game(int playerCount) {
 
 void Game::gameLoop() {
         std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
-        std::cout << "Initialized players.\n";
+        std::cout << "Player initialization complete.\n";
         dealFirstCards();
         updatePlayerHands();
         std::cout << std::endl;
         for (int i = 0; i < 3; i++) {
             takeActions();
-            if (i == 0) {
+            switch (i){
+            case 0:
                 dealCommunityCards(3);
-            }
-            else {
+                break;
+            
+            default:
                 dealCommunityCards(1);
+                break;
             }
+
             updatePlayerHands();
             takeActions();
         }
@@ -126,25 +130,25 @@ void Game::updatePlayerHands() {
 }
 
 void Game::scoreHands() {
-        //TODO: implement scoring
-        for (int i = 0; i < 4; i++) {
-            flush(i);
-        }
-        for (int i = 0; i < 4; i++) {
-            straight(i, false);
-        }
-        for (int i = 0; i < 4; i++) {
-            duplicate(i);
-        }
+    //TODO: implement scoring
+    for (int i = 0; i < 4; i++) {
+        flush(i);
     }
+    for (int i = 0; i < 4; i++) {
+        straight(i, false);
+    }
+    for (int i = 0; i < 4; i++) {
+        duplicate(i);
+    }
+}
 
-int Game::flush(int id) {
+std::vector<int> Game::flush(int id) {
     std::vector <int> flushedCards;
     Players* analyzedPlayer = findPlayerByID(id);
     if (analyzedPlayer == nullptr) {
-        std::cout << "findPlayerByID returned nullptr\n";
-        return 0;
+        throw std::runtime_error("findPlayerByID() returned nullptr.");
     }
+    std::vector <int> score;
     std::string flushSuit = "None";
     //i think flushCounter may not be needed
     int flushCounter = 0;
@@ -205,165 +209,215 @@ int Game::flush(int id) {
     
     if (flushCounter >= 5) {                                        //if the flushCounter is 5 or more, the player has a flush.
         std::cout << "Player " << id + 1 << " has a flush of " << flushSuit << "!\n";
-        straight(id, true, flushedCards);                           //we call straight() with the flushedCards vector to check for a straight flush.
-        return 1;
+        score = straight(id, true, flushedCards);                   //we call straight() with the flushedCards vector to check for a straight flush.
+        return score;
     }
     else {
-        return 0;
+        score.push_back(HIGHCARDSCORE);
+        return score;
     }
-    bool flush = false;
-    return flush;
 }
 
-int Game::straight(int id, bool shortHand, std::vector <int> flushedCards) {
-        Players* analyzedPlayer = findPlayerByID(id);
-        if (analyzedPlayer == nullptr) {
-            std::cout << "findPlayerByID returned nullptr\n";
-            return 0;
-        }
-        int sCounter = 1;                                                       //counter for the straight is initialized to 1 because the first card is already in the array.
-        bool straight = false;                                                  //straight is set to false by default.
-        int currentStraight[5] = {-1, -1, -1, -1, -1};                          //currentStraight is an array of 5 integers. it is used to check for a straight. it is initialized to -1. //TODO: maybe use a vector instead of an array
-        if (shortHand == false){                                                //this block is called only to check for a straight.   
-            int ranks[7];                                                       //ranks is an array of 7 integers. it is used to store the ranks of the player's hand.
-            for (int i = 0; i < 7; i++) {
-                ranks[i] = analyzedPlayer->pWideHand[i][1];
-            }
-            int n = sizeof(ranks) / sizeof(ranks[0]);
-            std::sort(ranks, ranks + n, std::greater<int>());                   //ranks is sorted in descending order.
-            currentStraight[0] = ranks[0];
-            for (int i = 0; i < 7; i++) {
-                if ((currentStraight[0] == 12) && (currentStraight[1] == 11) && (currentStraight[2] == 10) && (currentStraight[3] == 9)){ //checks if the current hand has a chance to be a broadway.
-                    for (int j = i; j < 7; j++ ){
-                        if (ranks[j] == 0){
-                            std::cout << "Player " << id + 1 << " has a Broadway Straight!" << std::endl;
-                            straight = true;
-                            break;
-                        }
-                    }
-                }
-                if(straight){                                                   //if the player has a broadway, we break the loop. not sure if needed tho.
-                    break;
-                }
-                
-                else if (ranks[i] - ranks[i + 1] == 1) {                        //typical straight check.     
-                    currentStraight[sCounter] = ranks[i+1];
-                    sCounter++;                                                     
-                    if (sCounter >= 5){                                             
-                        straight = true;                                            
-                        break;
-                    }
-                }
-                else if (ranks[i] - ranks[i + 1] == 0) {                        //the straight hasn't broken yet but didn't continue either. so we don't touch it.
-                    //wtf is this shit
-                    //maybe should've used a switch
-                    //anyways do nothing so maybe the straight will continue
-                    //TODO: commit suicide
-                }
-                else {                                                          //the straight is broken
-                    //reset the counter and currentStraight
-                    for (int j = 0; j < 5; j++){
-                        currentStraight[j] = -1;
-                    }
-                    sCounter = 1;
-                }
-            }
-            if (straight){
-                std::cout << "Player " << id + 1 << " has a straight!\n";
-            }
-            else{
-                std::cout << "Player " << id + 1 << " does not have a straight.\n";
-            }
-        return 0;
-    }   
-        else {//this block is called when a player already has flush and we want to check for straight or royal flush //most of this is documented in the if statement above
-            bool royal = false;
-            sort(flushedCards.begin(), flushedCards.end(), std::greater<int>());
-            currentStraight[0] = flushedCards[0];
-            for (int i = 0; i < flushedCards.size(); ++i){
-                std::cout << flushedCards[i] << " ";
-            }
-            for (int i = 0; i < flushedCards.size(); i++) {
-                if ((currentStraight[0] == 12) && (currentStraight[1] == 11) && (currentStraight[2] == 10) && (currentStraight[3] == 9)){
-                    for (int j = i-1; j < flushedCards.size(); j++ ){
-                        if (flushedCards[j] == 0){
-                            currentStraight[4] = 0; //this is a workaround for the ace being the last card in the hand. so we just add it to the end of the array. [9, 10, 11, 12, 0] // isn't it [12, 11, 10, 9, 0]?
-                            royal = true;
-                            straight = true;
-                            sCounter++;
-                        }
-                    }
-                }
-                if(straight){
-                    break;
-                }
-                
-                else if (flushedCards[i] - flushedCards[i + 1] == 1) {                             
-                    currentStraight[sCounter] = flushedCards[i+1];
-                    sCounter++;                                                     
-                    if (sCounter >= 5){                                             
-                        straight = true;                                            
-                        break;
-                    }
-                }
-                else if (flushedCards[i] - flushedCards[i + 1] == 0) {                            
-
-                }
-                else {
-                    //reset the counter and currentStraight
-                    for (int j = 0; j < 5; j++){
-                        currentStraight[j] = -1;
-                    }
-                    sCounter = 1;
-                }
-            }
-            if (straight && royal){
-                std::cout << "Player " << id + 1 << " has a Royal Flush!" << std::endl;
-            }
-            else if (straight && !royal){
-                std::cout << "Player " << id + 1 << " has a straight flush!\n";
-            }
-            else if (!straight){
-                std::cout << "Player " << id + 1 << " does not have a straight flush.\n";
-            }
-
-        }
-        return 0;
-}
-
-std::vector<int>Game::duplicate(int id) {
-    std::vector<int> score;
+std::vector<int> Game::straight(int id, bool shortHand, std::vector <int> flushedCards) {
+    //do NOT read further if you value your sanity
     Players* analyzedPlayer = findPlayerByID(id);
     if (analyzedPlayer == nullptr){
         throw std::runtime_error("findPlayerByID() returned nullptr.");
     }
+    std::vector <int> score;
+    int sCounter = 1;                                                       //counter for the straight is initialized to 1 because the first card will already be in the array.
+    bool straight = false;                                                  //straight is set to false by default.
+    int currentStraight[5];                                                 //currentStraight[] is used to check for a straight and also store it after the straight is completed.
+    setArrayToValue(currentStraight, 5, -1);
+    if (shortHand == false){                                                //this block is called only to check for a straight. flush+straight combinations are checked in the else block.  
+        int ranks[7];                                                       //ranks[] is used to store the ranks of the player's hand.
+        for (int i = 0; i < 7; i++) {
+            ranks[i] = analyzedPlayer->pWideHand[i][1];
+        }
+        int n = sizeof(ranks) / sizeof(ranks[0]);
+        std::sort(ranks, ranks + n, std::greater<int>());                   //ranks is sorted in descending order.
+        currentStraight[0] = ranks[0];
+        for (int i = 0; i < 7; i++) {
+            if ((currentStraight[0] == 12) && (currentStraight[1] == 11) && (currentStraight[2] == 10) && (currentStraight[3] == 9)){ //checks if the current hand has a chance to be a broadway.
+                for (int j = i; j < 7; j++ ){
+                    if (ranks[j] == 0){
+                        currentStraight[4] = 0;                                //if the player has an ace, we add it to the end of the array. [12, 11, .., 0]
+                        std::cout << "Player " << id + 1 << " has a Broadway Straight!" << std::endl;
+                        straight = true;
+                        break;
+                    }
+                }
+            }
+            if(straight){                                                   //if the player has a broadway, we break the loop. not sure if this is needed tho.
+                break;
+            }
+                
+            else if (ranks[i] - ranks[i + 1] == 1) {                        //typical straight check.     
+                currentStraight[sCounter] = ranks[i+1];
+                sCounter++;                                                     
+                if (sCounter >= 5){                                             
+                    straight = true;                                            
+                    break;
+                }
+            }
+            else if (ranks[i] - ranks[i + 1] == 0) {                        //the straight hasn't broken yet but didn't continue either. so we don't touch it.
+                    //wtf is this shit
+                    //maybe should've used a switch
+                    //anyways do nothing so maybe the straight will continue
+                    //TODO: commit suicide
+            }
+            else {                                                          //the straight is broken :(
+                //reset the counter and currentStraight
+                for (int j = 0; j < 5; j++){
+                    currentStraight[j] = -1;
+                }
+            sCounter = 1;
+            }
+        }
+        if (straight){
+            std::cout << "Player " << id + 1 << " has a straight!\n";
+            score.push_back(STRAIGHTSCORE);
+            for (int i = 0; i < 5; i++){
+                score.push_back(currentStraight[i]);
+            }
+        }
+        else{
+            std::cout << "Player " << id + 1 << " does not have a straight.\n";
+            score.push_back(HIGHCARDSCORE);
+        }
+    }   
+    else {//this block is called when a player already has flush and we want to check for straight or royal flush //most of this is documented in the if statement above
+        bool royal = false;
+        sort(flushedCards.begin(), flushedCards.end(), std::greater<int>());
+        currentStraight[0] = flushedCards[0];
+        for (int i = 0; i < flushedCards.size(); ++i){
+            std::cout << flushedCards[i] << " ";
+        }
+        for (int i = 0; i < flushedCards.size(); i++) {
+            if ((currentStraight[0] == 12) && (currentStraight[1] == 11) && (currentStraight[2] == 10) && (currentStraight[3] == 9)){
+                for (int j = i-1; j < flushedCards.size(); j++ ){
+                    if (flushedCards[j] == 0){
+                        currentStraight[4] = 0; //this is a workaround for the ace being the last card in the hand. so we just add it to the end of the array. [9, 10, 11, 12, 0] // isn't it [12, 11, 10, 9, 0]?
+                        royal = true;
+                        straight = true;
+                        sCounter++;
+                        break;
+                    }
+                }
+            }
+            if(straight){
+                break;
+            }
+                
+            else if (flushedCards[i] - flushedCards[i + 1] == 1) {                             
+                currentStraight[sCounter] = flushedCards[i+1];
+                sCounter++;                                                     
+                if (sCounter >= 5){                                             
+                    straight = true;                                            
+                    break;
+                }
+            }
+            else if (flushedCards[i] - flushedCards[i + 1] == 0) {                            
+
+            }
+            else {
+                //reset the counter and currentStraight
+                for (int j = 0; j < 5; j++){
+                    currentStraight[j] = -1;
+                }
+                sCounter = 1;
+            }
+            }
+        if (straight && royal){
+            std::cout << "Player " << id + 1 << " has a Royal Flush!" << std::endl;
+            score.push_back(ROYALFLUSHSCORE);
+        }
+        else if (straight && !royal){
+            std::cout << "Player " << id + 1 << " has a straight flush!\n";
+            score.push_back(STRAIGHTFLUSHSCORE);
+            int n = sizeof(currentStraight) / sizeof(currentStraight[0]);
+            std::sort(currentStraight, currentStraight + n, zeroFirstDesc);
+            for (int i = 0; i < 5; i++){
+                score.push_back(currentStraight[i]); //should be taking the Ace into account now.
+            }
+        }
+        else if (!straight){
+            std::cout << "Player " << id + 1 << " does not have a straight flush.\n";
+            score.push_back(FLUSHSCORE);
+            std::sort(flushedCards.begin(), flushedCards.end(), zeroFirstDesc);
+            for (int i = 0; i < 5; i++){
+                score.push_back(flushedCards[i]);
+            }
+        }
+
+    }
+    return score;
+}
+
+std::vector<int>Game::duplicate(int id) {
+    /**
+     * @brief This vector will be returned when evaluation finishes.
+     */
+    std::vector<int> score;
+    /**
+     * @brief Currently analyzed player for duplicates.
+     */
+    Players* analyzedPlayer = findPlayerByID(id);
+
+    //yeet if no pointer
+    if (analyzedPlayer == nullptr){
+        throw std::runtime_error("findPlayerByID() returned nullptr.");
+    }
+
+
     int duplicateCards[13];
     int ranks[7];
 
+    int pairs[3];
+    int pairCounter = 0;
+
+    int trios[2];
+    int trioCounter = 0;
+
+    int quad = -1;
+    int quadCounter = 0;
+    
     setArrayToValue(duplicateCards, 13, 0);
     setArrayToValue(ranks, 7, -1);
+    setArrayToValue(pairs, 3, -1);
+    setArrayToValue(trios, 2, -1);
 
-    for (int i = 0; i < 7; i++) { //store the ranks of the player's hand in the ranks array.
+
+    for (int i = 0; i < 7; i++) { //get ranks to the ranks array.
         ranks[i] = analyzedPlayer->pWideHand[i][1];
     }
 
+    //Sort ranks
+
     int n = sizeof(ranks) / sizeof(ranks[0]);
     std::sort(ranks, ranks + n, zeroFirstDesc);
-    std::cout << "Player " << id+1 << " has the cards: ";
+
+    //Loop through cards.
+    std::cout << "Player " << id+1 << " has the following cards: ";
     for (int i = 0; i < 7; i++) {
-        std::cout << ranks[i]+1 << " ";
+        displayCard(-1, ranks[i]);
+        switch (i){
+        case 6:
+            std::cout << " ";
+            break;
+        
+        default:
+            std::cout << ", ";
+            break;
+        }
     }
     std::cout << std::endl;
     for (int i = 0; i < 7; i++) { //add cards to duplicateCards
         duplicateCards[ranks[i]]++;
     }
-    int pairs[3] = {-1, -1, -1};
-    int pairCounter = 0;
-    int trios[2] = {-1, -1};
-    int trioCounter = 0;
-    int quad = -1;
-    int quadCounter = 0;
-    
+
+    //Tally for cards
+
     for (int i = 0; i < 13; i++) {
         switch (duplicateCards[i]){
             case 2:
@@ -382,30 +436,56 @@ std::vector<int>Game::duplicate(int id) {
                 break;
         }
     }
-
+    //This is where evaluation finalizes and returns the best (dupe related) score.
     //For this if chain, H = High Card(s), P = Paired Card(s), T = Trio Card, Q = Quad Card. S = Score of the hand. S values can be found in globals.cpp/.h. 
 
+    //Four of a kind
     if (quadCounter == 1){
         for (int i = 0; i < 7; i++){
             if (ranks[i] == quad){
                 ranks[i] = -1;
             }
         }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
         std::sort(ranks, ranks + n, zeroFirstDesc);
+
+        //store
+
         score.push_back(FOUROFAKINDSCORE);
         score.push_back(quad);
         score.push_back(ranks[0]);
+
+        //output
+
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has four of ";
         displayCard(-1, quad);
         std::cout <<"s!\n";
+
         //score should have score first, then quad, then the remaining high card. Like so -> <S, Q, H>
         return score;
     }
+    //Full house
     else if (trioCounter > 0 && pairCounter > 0){
+        //no need to remove dupes since there is no high cards.
+
+        //sort
+
+        n = sizeof(trios) / sizeof(trios[0]);
+        std::sort(trios, trios + n, zeroFirstDesc);
+        std::sort(pairs, pairs + n, zeroFirstDesc);
+        n = sizeof(pairs) / sizeof(pairs[0]);
+        
+        //store
+
         score.push_back(FULLHOUSESCORE);
         score.push_back(trios[0]);
         score.push_back(pairs[0]);
 
+        //output
+        
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has a full house of three ";
         displayCard(-1, trios[0]);
         std::cout << "s and two ";
@@ -415,17 +495,65 @@ std::vector<int>Game::duplicate(int id) {
         //this vector contains all the cards in the hand. so no high card is needed. <S, T, P>
         return score;
     }
+    //Three of a kind
+    else if (trioCounter > 0){
+
+        //remove dupes
+
+        for (int i = 0; i < 7; i++){
+            if (ranks[i] == trios[0]){
+                ranks[i] = -1;
+            }
+        }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
+        std::sort(ranks, ranks + n, zeroFirstDesc);
+
+        //store
+
+        score.push_back(THREEOFAKINDSCORE);
+        score.push_back(trios[0]);
+        for (int i = 0; i < 2; i++){
+            score.push_back(ranks[i]);
+        }
+
+        //output
+
+        std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has three of ";
+        displayCard(-1, trios[0]);
+        std::cout << "s!\n";
+
+        //score should be <S, T, H1, H2>
+        return score;
+    }
+    //Two Pair
     else if (pairCounter > 1){
+
+        //remove dupes
+
         for (int i = 0; i < 7; i++){
             if (ranks[i] == pairs[0] || ranks[i] == pairs[1]){
                 ranks[i] = -1;
             }
         }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
         std::sort(ranks, ranks + n, zeroFirstDesc);
         score.push_back(TWOPAIRSCORE);
+        n = sizeof(pairs) / sizeof(pairs[0]);
+        std::sort(pairs, pairs + n, zeroFirstDesc);
+
+        //store
+
         score.push_back(pairs[0]);
         score.push_back(pairs[1]);
         score.push_back(ranks[0]);
+
+        //output
 
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has two pairs! A pair of ";
         displayCard(-1, pairs[0]);
@@ -436,18 +564,33 @@ std::vector<int>Game::duplicate(int id) {
         //score should be <S, P1, P2, H>
         return score;
     }
+    //Pair
     else if (pairCounter > 0){
+
+        //remove dupes
+
         for (int i = 0; i < 7; i++){
             if (ranks[i] == pairs[0]){
                 ranks[i] = -1;
             }
         }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
         std::sort(ranks, ranks + n, zeroFirstDesc);
+        n = sizeof(pairs) / sizeof(pairs[0]);
+        std::sort(pairs, pairs + n, zeroFirstDesc);
+
+        //store
+
         score.push_back(PAIRSCORE);
         score.push_back(pairs[0]);
         for (int i = 0; i < 3; i++){
             score.push_back(ranks[i]);
         }
+
+        //output
 
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has a pair of ";
         displayCard(-1, pairs[0]);
@@ -456,6 +599,7 @@ std::vector<int>Game::duplicate(int id) {
         //score should be <S, P, H1, H2, H3>
         return score;
     }
+    //High card
     else {
         score.push_back(HIGHCARDSCORE);
         for (int i = 0; i < 5; i++){
@@ -469,9 +613,8 @@ std::vector<int>Game::duplicate(int id) {
 
 void Game::displayHand(int id) {
     Players* analyzedPlayer = findPlayerByID(id);
-    if (analyzedPlayer == nullptr) {
-        std::cout << "findPlayerByID returned nullptr\n";
-        return;
+    if (analyzedPlayer == nullptr){
+        throw std::runtime_error("findPlayerByID() returned nullptr.");
     }
     int s;
     int r;
@@ -504,9 +647,9 @@ void Game::dealFirstCards() {
 void Game::displayPlayerData(int playerID) {
         for (const auto& player : currentPlayers) {
             if (player.getPlayerID() == playerID){
-                    std::cout  << "Player ID:" << player.getPlayerID() << std::endl;
-                    std::cout  << "Player has $" << player.getMoney() << " money, " << player.getBet() << " bet, and has no cards dealt yet.\n";
-                    return;
+                std::cout  << "Player ID:" << player.getPlayerID() << std::endl;
+                std::cout  << "Player has $" << player.getMoney() << " money, " << player.getBet() << " bet, and has no cards dealt yet.\n";
+                return;
             }
         }
     std::cout << "Player ID not found.\n";
