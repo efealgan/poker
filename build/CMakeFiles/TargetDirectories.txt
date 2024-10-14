@@ -1,3 +1,0 @@
-C:/Users/salih/Projects/cpp/poker/build/CMakeFiles/Poker.dir
-C:/Users/salih/Projects/cpp/poker/build/CMakeFiles/edit_cache.dir
-C:/Users/salih/Projects/cpp/poker/build/CMakeFiles/rebuild_cache.dir

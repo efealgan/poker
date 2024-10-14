@@ -25,7 +25,6 @@
 
 int main() {
     initCards();
-    listCards();
 
     Game game;
     game.gameLoop();

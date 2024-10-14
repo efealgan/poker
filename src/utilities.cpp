@@ -78,64 +78,6 @@ void initCards() {
     }
 }
 
-void listCards() { //this function is completely unnecessary and the symbols cannot be displayed outside vscode just yet. //but it stays.
-    for (int i = 0; i < 4; i++) {
-        if (i == 0) {
-            std::cout << "♠A ";
-        }
-        else if (i == 1) {
-            std::cout << "♣A ";
-        }
-        else if (i == 2) {
-            std::cout << "♦A ";
-        }
-        else if (i == 3) {
-            std::cout << "♥A ";
-        }
-        for (int j = 1; j < 10; j++) {
-            if (i == 0) {
-                std::cout << "♠";
-            }
-            else if (i == 1) {
-                std::cout << "♣";
-            }
-            else if (i == 2) {
-                std::cout << "♦";
-            }
-            else if (i == 3) {
-                std::cout << "♥";
-            }
-            std::cout << cards[i][j] << " ";
-        }
-        for (int j = 11; j < 14; j++) {
-            if (i == 0) {
-                std::cout << "♠";
-            }
-            else if (i == 1) {
-                std::cout << "♣";
-            }
-            else if (i == 2) {
-                std::cout << "♦";
-            }
-            else if (i == 3) {
-                std::cout << "♥";
-            }
-
-
-            if (j == 11) {
-                std::cout << "J ";
-            }
-            else if (j == 12) {
-                std::cout << "Q ";
-            }
-            else if (j == 13) {
-                std::cout << "K ";
-            }
-        }
-        std::cout << std::endl;
-    }
-}
-
 bool zeroFirstDesc(int a, int b){
     if (a == 0) return true;
     if (b == 0) return false;

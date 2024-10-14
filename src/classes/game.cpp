@@ -12,18 +12,22 @@ Game::Game(int playerCount) {
 
 void Game::gameLoop() {
         std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
-        std::cout << "Initialized players.\n";
+        std::cout << "Player initialization complete.\n";
         dealFirstCards();
         updatePlayerHands();
         std::cout << std::endl;
         for (int i = 0; i < 3; i++) {
             takeActions();
-            if (i == 0) {
+            switch (i){
+            case 0:
                 dealCommunityCards(3);
-            }
-            else {
+                break;
+            
+            default:
                 dealCommunityCards(1);
+                break;
             }
+
             updatePlayerHands();
             takeActions();
         }
@@ -205,7 +209,8 @@ std::vector<int> Game::flush(int id) {
     
     if (flushCounter >= 5) {                                        //if the flushCounter is 5 or more, the player has a flush.
         std::cout << "Player " << id + 1 << " has a flush of " << flushSuit << "!\n";
-        straight(id, true, flushedCards);                           //we call straight() with the flushedCards vector to check for a straight flush.
+        score = straight(id, true, flushedCards);                   //we call straight() with the flushedCards vector to check for a straight flush.
+        return score;
     }
     else {
         score.push_back(HIGHCARDSCORE);
@@ -350,38 +355,69 @@ std::vector<int> Game::straight(int id, bool shortHand, std::vector <int> flushe
 }
 
 std::vector<int>Game::duplicate(int id) {
+    /**
+     * @brief This vector will be returned when evaluation finishes.
+     */
     std::vector<int> score;
+    /**
+     * @brief Currently analyzed player for duplicates.
+     */
     Players* analyzedPlayer = findPlayerByID(id);
+
+    //yeet if no pointer
     if (analyzedPlayer == nullptr){
         throw std::runtime_error("findPlayerByID() returned nullptr.");
     }
+
+
     int duplicateCards[13];
     int ranks[7];
 
+    int pairs[3];
+    int pairCounter = 0;
+
+    int trios[2];
+    int trioCounter = 0;
+
+    int quad = -1;
+    int quadCounter = 0;
+    
     setArrayToValue(duplicateCards, 13, 0);
     setArrayToValue(ranks, 7, -1);
+    setArrayToValue(pairs, 3, -1);
+    setArrayToValue(trios, 2, -1);
 
-    for (int i = 0; i < 7; i++) { //store the ranks of the player's hand in the ranks array.
+
+    for (int i = 0; i < 7; i++) { //get ranks to the ranks array.
         ranks[i] = analyzedPlayer->pWideHand[i][1];
     }
 
+    //Sort ranks
+
     int n = sizeof(ranks) / sizeof(ranks[0]);
     std::sort(ranks, ranks + n, zeroFirstDesc);
-    std::cout << "Player " << id+1 << " has the cards: ";
+
+    //Loop through cards.
+    std::cout << "Player " << id+1 << " has the following cards: ";
     for (int i = 0; i < 7; i++) {
-        std::cout << ranks[i]+1 << " ";
+        displayCard(-1, ranks[i]);
+        switch (i){
+        case 6:
+            std::cout << " ";
+            break;
+        
+        default:
+            std::cout << ", ";
+            break;
+        }
     }
     std::cout << std::endl;
     for (int i = 0; i < 7; i++) { //add cards to duplicateCards
         duplicateCards[ranks[i]]++;
     }
-    int pairs[3] = {-1, -1, -1};
-    int pairCounter = 0;
-    int trios[2] = {-1, -1};
-    int trioCounter = 0;
-    int quad = -1;
-    int quadCounter = 0;
-    
+
+    //Tally for cards
+
     for (int i = 0; i < 13; i++) {
         switch (duplicateCards[i]){
             case 2:
@@ -400,30 +436,56 @@ std::vector<int>Game::duplicate(int id) {
                 break;
         }
     }
-
+    //This is where evaluation finalizes and returns the best (dupe related) score.
     //For this if chain, H = High Card(s), P = Paired Card(s), T = Trio Card, Q = Quad Card. S = Score of the hand. S values can be found in globals.cpp/.h. 
 
+    //Four of a kind
     if (quadCounter == 1){
         for (int i = 0; i < 7; i++){
             if (ranks[i] == quad){
                 ranks[i] = -1;
             }
         }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
         std::sort(ranks, ranks + n, zeroFirstDesc);
+
+        //store
+
         score.push_back(FOUROFAKINDSCORE);
         score.push_back(quad);
         score.push_back(ranks[0]);
+
+        //output
+
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has four of ";
         displayCard(-1, quad);
         std::cout <<"s!\n";
+
         //score should have score first, then quad, then the remaining high card. Like so -> <S, Q, H>
         return score;
     }
+    //Full house
     else if (trioCounter > 0 && pairCounter > 0){
+        //no need to remove dupes since there is no high cards.
+
+        //sort
+
+        n = sizeof(trios) / sizeof(trios[0]);
+        std::sort(trios, trios + n, zeroFirstDesc);
+        std::sort(pairs, pairs + n, zeroFirstDesc);
+        n = sizeof(pairs) / sizeof(pairs[0]);
+        
+        //store
+
         score.push_back(FULLHOUSESCORE);
         score.push_back(trios[0]);
         score.push_back(pairs[0]);
 
+        //output
+        
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has a full house of three ";
         displayCard(-1, trios[0]);
         std::cout << "s and two ";
@@ -433,18 +495,31 @@ std::vector<int>Game::duplicate(int id) {
         //this vector contains all the cards in the hand. so no high card is needed. <S, T, P>
         return score;
     }
+    //Three of a kind
     else if (trioCounter > 0){
+
+        //remove dupes
+
         for (int i = 0; i < 7; i++){
             if (ranks[i] == trios[0]){
                 ranks[i] = -1;
             }
         }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
         std::sort(ranks, ranks + n, zeroFirstDesc);
+
+        //store
+
         score.push_back(THREEOFAKINDSCORE);
         score.push_back(trios[0]);
         for (int i = 0; i < 2; i++){
             score.push_back(ranks[i]);
         }
+
+        //output
 
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has three of ";
         displayCard(-1, trios[0]);
@@ -453,18 +528,32 @@ std::vector<int>Game::duplicate(int id) {
         //score should be <S, T, H1, H2>
         return score;
     }
-
+    //Two Pair
     else if (pairCounter > 1){
+
+        //remove dupes
+
         for (int i = 0; i < 7; i++){
             if (ranks[i] == pairs[0] || ranks[i] == pairs[1]){
                 ranks[i] = -1;
             }
         }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
         std::sort(ranks, ranks + n, zeroFirstDesc);
         score.push_back(TWOPAIRSCORE);
+        n = sizeof(pairs) / sizeof(pairs[0]);
+        std::sort(pairs, pairs + n, zeroFirstDesc);
+
+        //store
+
         score.push_back(pairs[0]);
         score.push_back(pairs[1]);
         score.push_back(ranks[0]);
+
+        //output
 
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has two pairs! A pair of ";
         displayCard(-1, pairs[0]);
@@ -475,18 +564,33 @@ std::vector<int>Game::duplicate(int id) {
         //score should be <S, P1, P2, H>
         return score;
     }
+    //Pair
     else if (pairCounter > 0){
+
+        //remove dupes
+
         for (int i = 0; i < 7; i++){
             if (ranks[i] == pairs[0]){
                 ranks[i] = -1;
             }
         }
+
+        //sort
+
+        n = sizeof(ranks) / sizeof(ranks[0]);
         std::sort(ranks, ranks + n, zeroFirstDesc);
+        n = sizeof(pairs) / sizeof(pairs[0]);
+        std::sort(pairs, pairs + n, zeroFirstDesc);
+
+        //store
+
         score.push_back(PAIRSCORE);
         score.push_back(pairs[0]);
         for (int i = 0; i < 3; i++){
             score.push_back(ranks[i]);
         }
+
+        //output
 
         std::cout << "Player " << analyzedPlayer->getPlayerID() + 1 << " has a pair of ";
         displayCard(-1, pairs[0]);
@@ -495,6 +599,7 @@ std::vector<int>Game::duplicate(int id) {
         //score should be <S, P, H1, H2, H3>
         return score;
     }
+    //High card
     else {
         score.push_back(HIGHCARDSCORE);
         for (int i = 0; i < 5; i++){
