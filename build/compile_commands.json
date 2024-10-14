@@ -1,0 +1,32 @@
+[
+{
+  "directory": "C:/Users/salih/Projects/cpp/poker/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe   -g -o CMakeFiles\\Poker.dir\\src\\main.cpp.obj -c C:\\Users\\salih\\Projects\\cpp\\poker\\src\\main.cpp",
+  "file": "C:/Users/salih/Projects/cpp/poker/src/main.cpp",
+  "output": "CMakeFiles/Poker.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/salih/Projects/cpp/poker/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe   -g -o CMakeFiles\\Poker.dir\\src\\utilities.cpp.obj -c C:\\Users\\salih\\Projects\\cpp\\poker\\src\\utilities.cpp",
+  "file": "C:/Users/salih/Projects/cpp/poker/src/utilities.cpp",
+  "output": "CMakeFiles/Poker.dir/src/utilities.cpp.obj"
+},
+{
+  "directory": "C:/Users/salih/Projects/cpp/poker/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe   -g -o CMakeFiles\\Poker.dir\\src\\globals.cpp.obj -c C:\\Users\\salih\\Projects\\cpp\\poker\\src\\globals.cpp",
+  "file": "C:/Users/salih/Projects/cpp/poker/src/globals.cpp",
+  "output": "CMakeFiles/Poker.dir/src/globals.cpp.obj"
+},
+{
+  "directory": "C:/Users/salih/Projects/cpp/poker/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe   -g -o CMakeFiles\\Poker.dir\\src\\classes\\game.cpp.obj -c C:\\Users\\salih\\Projects\\cpp\\poker\\src\\classes\\game.cpp",
+  "file": "C:/Users/salih/Projects/cpp/poker/src/classes/game.cpp",
+  "output": "CMakeFiles/Poker.dir/src/classes/game.cpp.obj"
+},
+{
+  "directory": "C:/Users/salih/Projects/cpp/poker/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe   -g -o CMakeFiles\\Poker.dir\\src\\classes\\players.cpp.obj -c C:\\Users\\salih\\Projects\\cpp\\poker\\src\\classes\\players.cpp",
+  "file": "C:/Users/salih/Projects/cpp/poker/src/classes/players.cpp",
+  "output": "CMakeFiles/Poker.dir/src/classes/players.cpp.obj"
+}
+]

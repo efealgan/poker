@@ -11,9 +11,9 @@
 /*TODO: 
     this list is roughly based on priority of missing features or existing problems.
     Game class
-        straight & flush should return high cards
+        straight & flush should return high cards                               //done
             //maybe flush should return all the cards that make the flush
-        implement duplicate checking
+        implement duplicate checking                                            //done
         implement betting 
         implement scoring
         reduce output of hand evaluation
