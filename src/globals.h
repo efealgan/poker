@@ -26,9 +26,9 @@ extern int dealtRank;                  //stores the most recently dealt (selecte
 extern int dealtCard[2];               //combines the two values above, idk if this is needed
 extern bool firstRound;                //so we can have a gameloop i guess
 extern int bustedPlayerCount;          //is busted player count
-extern int bufferSuit;                 //idk where i used this
-extern int bufferRank;                 //same as bufferSuit
 extern int cards[4][13];               //is cards
+extern int pot;                        //Stores the pot.
+extern bool wantToPlay;                //used in the game loop to check if the player wants to play again.
 
 //const defaults in .cpp file
 extern const int PLAYERCOUNT;   //default playercount, note that changing this does not actually add new players. this is just for displaying player count.
@@ -45,4 +45,9 @@ extern const int THREEOFAKINDSCORE;
 extern const int TWOPAIRSCORE;
 extern const int PAIRSCORE;
 extern const int HIGHCARDSCORE;
+
+//debug and testing vars
+extern int royalFlushCounter;
+
+void initGlobals();
 #endif

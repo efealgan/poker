@@ -13,6 +13,14 @@ Players::Players(int id, const int startingMoney, const int startingBet) {
     std::cout << "Player " << playerID + 1 << " has been initialized with " << 
     money << " credits. ID = " << playerID << ".\n";
 }
+void Players::resetPlayer() {
+    this->heldCards[0][0] = -1;
+    this->heldCards[0][1] = -1;
+    this->heldCards[1][0] = -1;
+    this->heldCards[1][1] = -1;
+    this->score[0] = -1;
+    std::cout << "Player " << playerID + 1 << " has had their cards reset.\n";
+}
 
 void Players::setHeldCards(int selectedSlot, int suitValue, int rankValue) {
     if (selectedSlot == 1) // first card is selected
@@ -117,7 +125,9 @@ std::vector <int> Players::getPlayerScore(){
     return this->score;
 }
 
+void takeAction(){
 
+}
 
 
 

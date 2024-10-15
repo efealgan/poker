@@ -6,6 +6,7 @@
 #include <array>
 #include <tuple>
 #include <stdexcept>
+#include <limits>
 
 #include "../globals.h"
 #include "players.h"

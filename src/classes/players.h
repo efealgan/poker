@@ -33,6 +33,7 @@ public:
     Players(int id, const int m, const int b);
 
     // cards
+    void resetPlayer();
     /**
      * @brief Sets the held cards for the player.
      * @param selectedSlot Card slot:  1 -> first slot
@@ -90,6 +91,8 @@ public:
 
     void testNewScore(std::vector <int> newScore);
     std::vector <int> getPlayerScore();
+
+    void takeAction();
 };
 
 #endif //PLAYERS_H
