@@ -13,30 +13,62 @@ Game::Game(int playerCount) {
 void Game::gameLoop() {
         std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players." << std::endl;
         std::cout << "Player initialization complete.\n";
-        dealFirstCards();
-        updatePlayerHands();
-        std::cout << std::endl;
-        for (int i = 0; i < 3; i++) {
-            takeActions();
-            switch (i){
-            case 0:
-                dealCommunityCards(3);
-                break;
-            
-            default:
-                dealCommunityCards(1);
-                break;
-            }
-
+        while (wantToPlay)
+        {
+            initGlobals();
+            dealFirstCards();
             updatePlayerHands();
-            takeActions();
+            std::cout << std::endl;
+            for (int i = 0; i < 3; i++) {
+                takeActions();
+                switch (i){
+                case 0:
+                    dealCommunityCards(3);
+                    break;
+
+                default:
+                    dealCommunityCards(1);
+                    break;
+                }
+
+                updatePlayerHands();
+                takeActions();
+            }
+            std::cout << std::endl;
+            for (auto&  player : currentPlayers) {
+                player.getHeldCards(3, true);
+            }
+            displayCommunityCards();
+            scoreHands();
+            std::cout << "Game over.\n";
+            std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players left.\n";
+            do{
+                std::cout << "Do you want to play again? (1 = yes, 0 = no)\n";
+                std::cin >> wantToPlay;
+
+                if (std::cin.fail() || (wantToPlay != 1 && wantToPlay != 0)) {//invalid input, loop again
+                    std::cin.clear(); // Clear the error flag
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore invalid input
+                    std::cout << "Invalid input. Please enter 1 for yes or 0 for no.\n";
+                }   
+                else {// Valid input, reset the game and break the loop
+                    for (auto& player : currentPlayers) { //soft reset player data
+                        player.resetPlayer();
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        communityCards[i][0] = -1;
+                        communityCards[i][1] = -1;
+                    }
+                    dealtCommunityCards = 0;
+                    break; 
+                }
+            } while (true);
+            
+            
         }
-        std::cout << std::endl;
-        for (auto&  player : currentPlayers) {
-            player.getHeldCards(3, true);
-        }
-        displayCommunityCards();
-        scoreHands();
+
+
+            
         //TODO: game loop should actually be a loop, not just a sequence of events
 
     }

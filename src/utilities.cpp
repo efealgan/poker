@@ -1,8 +1,5 @@
-#include <iostream>
-#include <random>
-#include <iostream>
 #include "utilities.h"
-#include "globals.h"
+
 
 
 void displayCard(int suit, int rank) {
