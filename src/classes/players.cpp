@@ -9,6 +9,7 @@ Players::Players(int id, const int startingMoney, const int startingBet) {
     heldCards[0][1] = -1;
     heldCards[1][0] = -1;
     heldCards[1][1] = -1;
+    score.push_back(-1);
     std::cout << "Player " << playerID + 1 << " has been initialized with " << 
     money << " credits. ID = " << playerID << ".\n";
 }
@@ -102,8 +103,19 @@ void Players::dealToPlayer(int amountToDeal) {
 
 }
 
+void Players::testNewScore(std::vector <int> newScore) {
+    if (this->score[0] <= newScore[0]){
+        this->score = newScore;
+        std::cout << "New best score is: " << this->score[0] << ".\n";
+    }
+    else {
+        std::cout << "Previous score (" << this->score[0] << ") was better. Not changing score to " << newScore[0] << ".\n";
+    }
+}
 
-
+std::vector <int> Players::getPlayerScore(){
+    return this->score;
+}
 
 
 

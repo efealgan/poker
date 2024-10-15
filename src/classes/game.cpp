@@ -130,16 +130,44 @@ void Game::updatePlayerHands() {
 }
 
 void Game::scoreHands() {
-    //TODO: implement scoring
-    for (int i = 0; i < 4; i++) {
-        flush(i);
+    std::vector <std::vector <int>> playerScores;
+    for (Players& player : currentPlayers) {
+        std::cout << "\n\n\n";
+        std::cout << ">---Player " << player.getPlayerID() + 1 << "---<\n";
+        std::cout << "Calling flush\n";
+        player.testNewScore(flush(player.getPlayerID()));
+        std::cout << "Calling straight\n";
+        player.testNewScore(straight(player.getPlayerID()));
+        std::cout << "Calling dupes\n";
+        player.testNewScore(duplicate(player.getPlayerID()));
+        playerScores.push_back(player.getPlayerScore());
     }
-    for (int i = 0; i < 4; i++) {
-        straight(i, false);
+
+    std::vector<int> highestScore;
+    highestScore.push_back(-1);
+    int winningPlayerID = -1;
+    
+    for (int i = 0; i < currentPlayers.size(); i++) {
+        int playerScore = playerScores[i][0]; // First element is the main score.
+        if (playerScore > highestScore[0]) {
+            highestScore = playerScores[i];
+            winningPlayerID = currentPlayers[i].getPlayerID();
+        }
+        else if (playerScore == highestScore[0]){
+            for (int j = 1; j < playerScores[i].size(); j++){
+                if (zeroFirstDesc(playerScores[i][j], highestScore[j])){
+                    highestScore = playerScores[i];
+                    winningPlayerID = currentPlayers[i].getPlayerID();
+                }
+                else if (playerScores[i][j] < highestScore[j]){
+                    break;
+                }
+            }
+        }
     }
-    for (int i = 0; i < 4; i++) {
-        duplicate(i);
-    }
+
+    std::cout << "The winner is Player " << winningPlayerID + 1 << " with a score of " << highestScore[0] << "!\n";
+    
 }
 
 std::vector<int> Game::flush(int id) {

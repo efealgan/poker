@@ -18,7 +18,6 @@ private:
     int bet;                    //current player bet
         
 public:
-    int handScore;              //NOT USED //this might be useful for a future feature when determining the winner
     int pWideHand[7][2];        //= player cards + community cards
     int pShortHand[5][2];       //the best evaluated hand of player.
     int pShortHandBuffer[5][2]; //the best evaluated hand 2: electric boogaloo. because i am stupid
@@ -89,6 +88,8 @@ public:
      */
     void dealToPlayer(int amountToDeal);
 
+    void testNewScore(std::vector <int> newScore);
+    std::vector <int> getPlayerScore();
 };
 
 #endif //PLAYERS_H
