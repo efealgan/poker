@@ -147,13 +147,13 @@ void Game::scoreHands() {
     highestScore.push_back(-1);
     int winningPlayerID = -1;
     
-    for (int i = 0; i < currentPlayers.size(); ++i) {
+    for (int i = 0; i < currentPlayers.size(); i++) {
         int playerScore = playerScores[i][0]; // First element is the main score.
         if (playerScore > highestScore[0]) {
             highestScore = playerScores[i];
             winningPlayerID = currentPlayers[i].getPlayerID();
         }
-        else if (playerScore = highestScore[0]){
+        else if (playerScore == highestScore[0]){
             for (int j = 1; j < playerScores[i].size(); j++){
                 if (zeroFirstDesc(playerScores[i][j], highestScore[j])){
                     highestScore = playerScores[i];
@@ -163,9 +163,6 @@ void Game::scoreHands() {
                     break;
                 }
             }
-        }
-        else {
-            break;
         }
     }
 
