@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <limits>
 
+#include "../interface.h"
 #include "../globals.h"
 #include "players.h"
 
