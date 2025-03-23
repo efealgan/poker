@@ -27,7 +27,7 @@ void Players::setHeldCards(int selectedSlot, int suitValue, int rankValue) {
     {
         this->heldCards[0][0] = suitValue;
         this->heldCards[0][1] = rankValue;
-        std::cout << "Player " << this->playerID << " has been dealt: "; 
+        std::cout << "Player " << this->playerID + 1 << " has been dealt: "; 
         displayCard(heldCards[0][0], heldCards[0][1]);
         std::cout << std::endl;
     }
@@ -35,7 +35,7 @@ void Players::setHeldCards(int selectedSlot, int suitValue, int rankValue) {
     {
         this->heldCards[1][0] = suitValue;
         this->heldCards[1][1] = rankValue;
-        std::cout << "Player " << this->playerID << " has been dealt: "; 
+        std::cout << "Player " << this->playerID + 1 << " has been dealt: "; 
         displayCard(heldCards[1][0], heldCards[1][1]);
         std::cout << std::endl;
     }

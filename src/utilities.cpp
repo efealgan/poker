@@ -1,44 +1,332 @@
 #include "utilities.h"
 
 
+void displaySuit(int suit, bool capitalize, bool plural) {
+    switch (capitalize){
+        case true:
+            switch (plural){
+                case true:
+                    switch (suit){
+                        case 0: 
+                            std::cout << "Spades";
+                            break;
+                        case 1:
+                            std::cout << "Clubs";
+                            break;
+                        case 2:
+                            std::cout << "Hearts";
+                            break;
+                        case 3:
+                            std::cout << "Diamonds";
+                            break;
+                    }
+                    break;
+                case false:
+                    switch (suit){
+                        case 0: 
+                            std::cout << "Spade";
+                            break;
+                        case 1:
+                            std::cout << "Club";
+                            break;
+                        case 2:
+                            std::cout << "Heart";
+                            break;
+                        case 3:
+                            std::cout << "Diamond";
+                            break;
+                    }
+                    break;
+            }
+            break;
 
+        case false:
+            switch (plural){
+                case true:
+                    switch (suit){
+                        case 0: 
+                            std::cout << " spades";
+                            break;
+                        case 1:
+                            std::cout << " clubs";
+                            break;
+                        case 2:
+                            std::cout << " hearts";
+                            break;
+                        case 3:
+                            std::cout << " diamonds";
+                            break;
+                    }
+                    break;
+                case false:
+                    switch (suit){
+                        case 0: 
+                            std::cout << " spade";
+                            break;
+                        case 1:
+                            std::cout << " club";
+                            break;
+                        case 2:
+                            std::cout << " heart";
+                            break;
+                        case 3:
+                            std::cout << " diamond";
+                            break;
+                    }
+                    break;
+            }
+            break;
+    }
+}
+void displayRank(int rank, bool longForm, bool capitalize, bool plural){
+    switch (longForm){
+        case true:
+            switch (capitalize){
+                case true:
+                    switch (plural){
+                        case true:
+                            switch (rank){
+                                case 0: 
+                                    std::cout << "Aces";
+                                    break;
+                                case 1:
+                                    std::cout << "Twos";
+                                    break;
+                                case 2:
+                                    std::cout << "Threes";
+                                    break;
+                                case 3:
+                                    std::cout << "Fours";
+                                    break;
+                                case 4:
+                                    std::cout << "Fives";
+                                    break;
+                                case 5:
+                                    std::cout << "Sixes";
+                                    break;
+                                case 6:
+                                    std::cout << "Sevens";
+                                    break;
+                                case 7:
+                                    std::cout << "Eights";
+                                    break;
+                                case 8:
+                                    std::cout << "Nines";
+                                    break;
+                                case 9:
+                                    std::cout << "Tens";
+                                    break;
+                                case 10:
+                                    std::cout << "Jacks";
+                                    break;
+                                case 11:
+                                    std::cout << "Queens";
+                                    break;
+                                case 12:
+                                    std::cout << "Kings";
+                                    break;      
+                            }
+                            break;
+                        case false:
+                            switch (rank){
+                            case 0: 
+                                std::cout << "Ace";
+                                break;
+                            case 1:
+                                std::cout << "Two";
+                                break;
+                            case 2:
+                                std::cout << "Three";
+                                break;
+                            case 3:
+                                std::cout << "Four";
+                                break;
+                            case 4:
+                                std::cout << "Five";
+                                break;
+                            case 5:
+                                std::cout << "Six";
+                                break;
+                            case 6:
+                                std::cout << "Seven";
+                                break;
+                            case 7:
+                                std::cout << "Eight";
+                                break;
+                            case 8:
+                                std::cout << "Nine";
+                                break;
+                            case 9:
+                                std::cout << "Ten";
+                                break;
+                            case 10:
+                                std::cout << "Jack";
+                                break;
+                            case 11:
+                                std::cout << "Queen";
+                                break;
+                            case 12:
+                                std::cout << "King";
+                                break;      
+                        }
+                            break;
+                    }
+                    break;
+                case false:
+                    switch (plural){
+                        case true:
+                            switch (rank){
+                                case 0: 
+                                    std::cout << "Aces";
+                                    break;
+                                case 1:
+                                    std::cout << "Twos";
+                                    break;
+                                case 2:
+                                    std::cout << "Threes";
+                                    break;
+                                case 3:
+                                    std::cout << "Fours";
+                                    break;
+                                case 4:
+                                    std::cout << "Fives";
+                                    break;
+                                case 5:
+                                    std::cout << "Sixes";
+                                    break;
+                                case 6:
+                                    std::cout << "Sevens";
+                                    break;
+                                case 7:
+                                    std::cout << "Eights";
+                                    break;
+                                case 8:
+                                    std::cout << "Nines";
+                                    break;
+                                case 9:
+                                    std::cout << "Tens";
+                                    break;
+                                case 10:
+                                    std::cout << "Jacks";
+                                    break;
+                                case 11:
+                                    std::cout << "Queens";
+                                    break;
+                                case 12:
+                                    std::cout << "Kings";
+                                    break;      
+                            }
+                            break;
+                        case false:
+                            switch (rank){
+                                case 0: 
+                                    std::cout << "Ace";
+                                    break;
+                                case 1:
+                                    std::cout << "Two";
+                                    break;
+                                case 2:
+                                    std::cout << "Three";
+                                    break;
+                                case 3:
+                                    std::cout << "Four";
+                                    break;
+                                case 4:
+                                    std::cout << "Five";
+                                    break;
+                                case 5:
+                                    std::cout << "Six";
+                                    break;
+                                case 6:
+                                    std::cout << "Seven";
+                                    break;
+                                case 7:
+                                    std::cout << "Eight";
+                                    break;
+                                case 8:
+                                    std::cout << "Nine";
+                                    break;
+                                case 9:
+                                    std::cout << "Ten";
+                                    break;
+                                case 10:
+                                    std::cout << "Jack";
+                                    break;
+                                case 11:
+                                    std::cout << "Queen";
+                                    break;
+                                case 12:
+                                    std::cout << "King";
+                                    break;      
+                    }
+                            break;
+                    }
+                    break;
+            }
+            break;
+        case false:
+            //capitalizing short form is useless, so i didnt put the switch for it.
+            switch (plural){
+                case true:
+                    switch (rank){
+                        case 0: 
+                            std::cout << "As";
+                            break;
+                        case 10:
+                            std::cout << "Js";
+                            break;
+                        case 11:
+                            std::cout << "Qs";
+                            break;
+                        case 12:
+                            std::cout << "Ks";
+                            break;      
+                        default:
+                            std::cout << rank + 1 << "s";
+                            break;
+                    }
+                    break;
+                case false:
+                    switch (rank){
+                        case 0: 
+                            std::cout << "A";
+                            break;
+                        case 10:
+                            std::cout << "J";
+                            break;
+                        case 11:
+                            std::cout << "Q";
+                            break;
+                        case 12:
+                            std::cout << "K";
+                            break;      
+                        default:
+                            std::cout << rank + 1;
+                            break;
+                    }
+                    break;
+        }
+            break;
+    }
+}
 void displayCard(int suit, int rank) {
     if (suit == -1 && rank == -1)
     {
         std::cout << "no card.\n";
         return;
     }
-    
-    if (rank == 0) {
-        std::cout << "Ace";
+    else {
+    displayRank(rank, true, true, false);
+    switch (suit){
+        case -1:
+            break;
+        default:
+            std::cout << " of ";
+            break;
     }
-    else if (rank < 10) {
-        std::cout << rank + 1;
-    }
-    else if (rank == 10) {
-        std::cout << "Jack";
-    }
-    else if (rank == 11) {
-        std::cout << "Queen";
-    }
-    else if (rank == 12){
-        std::cout << "King";
-    }
-
-    if (suit == 0) {
-        std::cout << " of Spades ";
-    }
-    else if (suit == 1) {
-        std::cout << " of Clubs ";
-    }
-    else if (suit == 2) {
-        std::cout << " of Diamonds ";
-    }
-    else if (suit == 3){
-        std::cout << " of Hearts ";
+    displaySuit(suit, true, true);
     }
 }
-
 /// @brief selects a card at random
 /// @param amount how many cards to deal 
 /// @return dealt card

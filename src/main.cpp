@@ -17,7 +17,7 @@
         implement betting 
         implement scoring
         reduce output of hand evaluation
-        implement a game loop  //it cant loop yet
+        implement a game loop  //it loops
         implement a debug mode //it kinda exists
         
         a GUI????

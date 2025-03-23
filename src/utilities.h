@@ -4,6 +4,8 @@
 #include <random>
 #include "globals.h"
 
+void displaySuit(int suit, bool capitalize, bool plural);
+void displayRank(int rank, bool longForm, bool capitalize, bool plural);
 void displayCard(int suit, int rank);
 int dealCard(int amount);
 void initCards();

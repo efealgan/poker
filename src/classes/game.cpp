@@ -43,7 +43,7 @@ void Game::gameLoop() {
             std::cout << "\nGame over.\n";
             std::cout << "There are " << PLAYERCOUNT - bustedPlayerCount << " players left.\n";
 
-            if(inputYesNo("\nDo you want to play again? (Y/N)")) {
+            if(inputYesNo("\nDo you want to play again? (Y/n)")) {
                 cls();
                 for (auto& player : currentPlayers) { //soft reset player data
                     player.resetPlayer();
@@ -62,7 +62,6 @@ void Game::gameLoop() {
 
 
             
-        //TODO: game loop should actually be a loop, not just a sequence of events
 
     }
 
@@ -174,11 +173,11 @@ void Game::scoreHands() {
     
     for (int i = 0; i < currentPlayers.size(); i++) {
         int playerScore = playerScores[i][0]; // First element is the main score.
-        if (playerScore > highestScore[0]) {
+        if (playerScore > highestScore[0]) { //This player has a better ranking hand.
             highestScore = playerScores[i];
             winningPlayerID = currentPlayers[i].getPlayerID();
         }
-        else if (playerScore == highestScore[0]){
+        else if (playerScore == highestScore[0]){ //This player has the same ranking hand but might have higher cards.
             for (int j = 1; j < playerScores[i].size(); j++){
                 if (zeroFirstDesc(playerScores[i][j], highestScore[j])){
                     highestScore = playerScores[i];
@@ -190,6 +189,71 @@ void Game::scoreHands() {
             }
         }
     }
+
+    //std::cout << "\nPlayer " << winningPlayerID + 1 << "wins with ";
+    //switch (highestScore[0]){
+    //case 0:
+    //    switch (highestScore[1]){
+    //    case 0: //highest card is an Ace
+    //        std::cout << "an Ace high.\n";
+    //        break;
+    //
+    //    case 10: 
+    //        std::cout << "a Jack high.\n";
+    //        break;
+    //
+    //    case 11:
+    //        std::cout << "a Queen high.\n";
+    //        break;
+    //
+    //    case 12:
+    //        std::cout << "a King high.\n";
+    //        break;
+    //
+    //    default:
+    //        std::cout << "a " << highestScore[1]+1 << "high.";
+    //        break;
+    //    }
+    //    break;
+    //
+    //case 1:
+    //    std::cout << "a pair of " << highestScore[1] << std::endl;
+    //    break;
+    //
+    //case 2: 
+    //    std::cout << "pairs of " << highestScore[1] << "and " << highestScore[2] << " with ";
+    //    switch (highestScore[1]){
+    //        case 0: //highest card is an Ace
+    //            std::cout << "an Ace high.\n";
+    //            break;
+    //
+    //        case 10: 
+    //            std::cout << "a Jack high.\n";
+    //            break;
+    //
+    //        case 11:
+    //            std::cout << "a Queen high.\n";
+    //            break;
+    //
+    //        case 12:
+    //            std::cout << "a King high.\n";
+    //            break;
+    //
+    //        default:
+    //            std::cout << "a " << highestScore[3]+1 << "high.";
+    //            break;
+    //        }
+    //    break;
+    //
+    //case 3:
+    //    
+    //    
+    //
+    //default:
+    //    break;
+    //}
+
+
 
     std::cout << "\nThe winner is Player " << winningPlayerID + 1 << " with a score of " << highestScore[0] << "!\n";
     
@@ -453,7 +517,7 @@ std::vector<int>Game::duplicate(int id) {
     //Loop through cards.
     std::cout << "Player " << id+1 << " has the following cards: ";
     for (int i = 0; i < 7; i++) {
-        displayCard(-1, ranks[i]);
+        displayRank(ranks[i], false, true, false);
         switch (i){
         case 6:
             std::cout << " ";
@@ -490,7 +554,7 @@ std::vector<int>Game::duplicate(int id) {
         }
     }
     //This is where evaluation finalizes and returns the best (dupe related) score.
-    //For this if chain, H = High Card(s), P = Paired Card(s), T = Trio Card, Q = Quad Card. S = Score of the hand. S values can be found in globals.cpp/.h. 
+    //For this if chain, H = High Card(s), P = Paired Card(s), T = Trio Card, Q = Quad Card. S = Score of the hand. Score values can be found in globals.cpp. 
 
     //Four of a kind
     if (quadCounter == 1){
@@ -517,12 +581,12 @@ std::vector<int>Game::duplicate(int id) {
         displayCard(-1, quad);
         std::cout <<"s!\n";
 
-        //score should have score first, then quad, then the remaining high card. Like so -> <S, Q, H>
+        //score should have score first, then quad, then the remaining highest card. Like so -> <S, Q, H>
         return score;
     }
     //Full house
     else if (trioCounter > 0 && pairCounter > 0){
-        //no need to remove dupes since there is no high cards.
+        //no need to remove dupes since there are no high cards in a full house.
 
         //sort
 
@@ -653,7 +717,7 @@ std::vector<int>Game::duplicate(int id) {
         return score;
     }
     //High card
-    else {
+    else { //Bro has nothing
         score.push_back(HIGHCARDSCORE);
         for (int i = 0; i < 5; i++){
             score.push_back(ranks[i]);
